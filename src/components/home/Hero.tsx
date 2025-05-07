@@ -1,7 +1,7 @@
 const Hero = () => {
   return (
     <header className="min-h-[100dvh] w-full relative bg-[url(/src/assets/whole1.jpg)] bg-cover bg-no-repeat bg-top pt-[12rem] pb-[5rem]">
-      <div className="w-full h-full absolute left-0 top-0 bg-[#4a0042]/60"></div>
+      <div className="w-full h-full absolute left-0 top-0 bg-[#4a0042]/50"></div>
 
       {/* hero details */}
       <div className="relative flex justify-center lg:justify-end px-4 xl:px-[10rem] ">

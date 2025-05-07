@@ -31,7 +31,6 @@ const Activities = () => {
       title: "Carer support groups and well-being sessions",
       image: "act8.jpg",
     },
-    s,
   ];
 
   return (
