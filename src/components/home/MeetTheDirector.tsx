@@ -6,7 +6,7 @@ const MeetTheDirector = () => {
   const directorInfo = {
     name: "Grace Ale-dare",
     role: "Director",
-    image: "mage.jpg",
+    image: "grace.jpg",
     experience: {
       years: "15+ years of experience",
       description:
@@ -43,7 +43,7 @@ const MeetTheDirector = () => {
           <div className="max-w-[520px]">
             <div className="max-w-[520px] aspect-square rounded-full overflow-hidden">
               <img
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-top"
                 src={getImageSrc(directorInfo.image)}
                 alt={`Portrait of ${directorInfo.name}`}
               />

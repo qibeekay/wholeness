@@ -4,41 +4,34 @@ import { getImageSrc } from "../../utils/imageUtils";
 const Activities = () => {
   const activities = [
     {
-      title: "Music & Movement",
+      title: "Music and singing sessions",
       image: "act1.png",
     },
     {
-      title: "Chair Exercises",
-      image: "act2.jpg",
-    },
-    {
-      title: "Reminiscence Therapy",
+      title: "Reminiscence therapy and memory games",
       image: "act3.jpg",
     },
     {
-      title: "Art & Craft",
+      title: "Arts & Crafts",
       image: "act4.jpg",
     },
     {
-      title: "Gentle Exercises",
+      title: "Gentle chair-based exercise and movement",
       image: "act5.jpg",
     },
     {
-      title: "Gardening Club",
+      title: "Gardening and nature-based therapy",
       image: "act6.jpg",
     },
     {
-      title: "Games & Puzzles",
+      title: "Sensory stimulation activities",
       image: "act7.jpg",
     },
     {
-      title: "Wellness Talks",
+      title: "Carer support groups and well-being sessions",
       image: "act8.jpg",
     },
-    {
-      title: "Tea, Chat & Support",
-      image: "act9.jpg",
-    },
+    s,
   ];
 
   return (
@@ -49,7 +42,7 @@ const Activities = () => {
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 place-items-center gap-2 sm:gap-5 max-w-[1220px] mx-auto mt-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 place-items-center gap-2 sm:gap-5 max-w-[1220px] mx-auto mt-10">
         {activities.map((activity, index) => (
           <div
             key={index}
@@ -62,7 +55,7 @@ const Activities = () => {
             />
             {/* Animated overlay */}
             <div className="absolute inset-0 bg-primary/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-primary grid place-items-center px-5 sm:px-5 py-3 sm:py-0 w-fit sm:w-[200px] md:w-[300px] sm:h-[60px] rounded-[8px] z-10">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-primary grid place-items-center px-5 sm:px-5 py-3 sm:py-0 w-fit xs:w-[300px] md:w-[300px] sm:h-[60px] rounded-[8px] z-10">
               <p className="text-white text-center font-bold text-xs sm:text-sm md:text-base">
                 {activity.title}
               </p>

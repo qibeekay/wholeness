@@ -22,7 +22,7 @@ const Stories = () => {
               <h2 className="font-jakarta text-[32px] font-bold">Our Story</h2>
 
               {/* paragraph */}
-              <p className="text-sm xs:text-base">
+              <p className="text-sm xs:text-base md:text-lg">
                 Wholeness Haven CIC was born from a passion to see individuals
                 with dementia and older adults experience life to the fullest.
                 Founded by experienced care professionals, we combine knowledge,
@@ -48,7 +48,7 @@ const Stories = () => {
               </h2>
 
               {/* paragraph */}
-              <p className="text-sm xs:text-base">
+              <p className="text-sm xs:text-base md:text-lg">
                 Wholeness Haven CIC is a community-based well-being club
                 supporting people living with dementia and those experiencing
                 the challenges of ageing. We offer inclusive, engaging

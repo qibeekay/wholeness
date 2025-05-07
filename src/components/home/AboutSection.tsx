@@ -26,16 +26,24 @@ const AboutSection = () => {
         <div className="max-w-[653px] mx-auto sm:mx-0">
           <div className="w-full">
             <p className="text-[24px]">A Little About Us</p>
-            <p className="text-sm xs:text-base pt-1 pb-4">
-              At Wholeness Haven CIC, we believe that every stage of life
-              deserves to be lived with joy, dignity, and connection. We offer a
-              safe, nurturing space where individuals living with dementia—and
-              those journeying through later life—can thrive, not just survive.
+            <p className="text-sm xs:text-base md:text-lg ">
+              <span className="font-bold rounded">Wholeness Haven </span>
+              is a Dementia and Ageing Well-being Club dedicated to supporting
+              individuals affected by dementia and their carers. We offer a
+              compassionate, community-focused space where people can connect,
+              feel understood, and access holistic support. Founded and led by{" "}
+              <span className="font-bold rounded">Grace</span>—whose mother
+              lived with dementia—our services are rooted in both personal
+              experience and professional expertise.
             </p>
-            <p className="text-sm xs:text-base">
-              We are a community interest company dedicated to promoting
-              holistic well-being, meaningful engagement, and lifelong
-              connection.
+            <p className="text-sm xs:text-base md:text-lg mt-5">
+              With over 18 years in the health sector, including roles as an
+              Anaesthetic and Recovery Practitioner, Health and Social Care
+              worker, and certified Health Coach and trained Dementia Trainer.
+            </p>
+            <p className="mt-5">
+              <span className="font-bold rounded">Grace</span> brings a unique
+              and deeply empathetic approach to care and well-being.
             </p>
           </div>
 
