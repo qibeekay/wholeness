@@ -4,6 +4,18 @@ import { getImageSrc } from "../../utils/imageUtils";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 
+const links = ["Home", "About", "Services", "Contact", "Resources", "Events"];
+
+const mobileLinks = [
+  "Home",
+  "About",
+  "Services",
+  "Contact",
+  "Resources",
+  "Events",
+  "Get Involved",
+];
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -57,8 +69,8 @@ const Navbar = () => {
         </div>
 
         {/* links */}
-        <div className="hidden md:flex space-x-8">
-          {["Home", "About", "Services", "Contact", "Resources"].map((item) => (
+        <div className="hidden lg:flex space-x-8">
+          {links.map((item) => (
             <div>
               <Link
                 to={`/${item === "Home" ? "" : item.toLowerCase()}`}
@@ -102,14 +114,7 @@ const Navbar = () => {
             className="md:hidden bg-primary/50 backdrop-blur-md p-4 rounded-xl mt-2"
           >
             <div className="flex flex-col space-y-4">
-              {[
-                "Home",
-                "About",
-                "Services",
-                "Contact",
-                "Resources",
-                "Get Involved",
-              ].map((item, index) => (
+              {mobileLinks.map((item, index) => (
                 <motion.a
                   key={item}
                   href={`/${
