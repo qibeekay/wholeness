@@ -24,7 +24,7 @@ const OtherHero = ({ h1, p, img }: Props) => {
           <h1 className="font-jakarta font-bold text-[25px] sm:text-[40px] md:text-[50px]">
             {h1}
           </h1>
-          <p className="font-jakarta text-[18px] sm:text-[22px] md:text-[32px]">
+          <p className="font-jakarta text-[18px] sm:text-[22px] md:text-[30px] max-w-[700px] mx-auto">
             {p}
           </p>
         </div>

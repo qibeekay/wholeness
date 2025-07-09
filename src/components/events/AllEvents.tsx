@@ -199,7 +199,9 @@ const AllEvents = () => {
               <div className="p-5">
                 <div className="flex items-start justify-between mb-2">
                   <p
-                    className={`${getCategoryColor(event.category)} text-white`}
+                    className={`${getCategoryColor(
+                      event.category
+                    )} text-white inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-primary`}
                   >
                     {event.category.charAt(0).toUpperCase() +
                       event.category.slice(1)}
