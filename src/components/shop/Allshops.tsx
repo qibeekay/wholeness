@@ -171,7 +171,7 @@ const Allshops = () => {
           {filteredProducts.map((product) => (
             <div
               key={product.id}
-              className="card-hover overflow-hidden cursor-pointer rounded-[16px] bg-white"
+              className="card-hover overflow-hidden cursor-pointer rounded-[16px] bg-white py-10 "
             >
               <div className="h-48 bg-gradient-to-br from-calming-blue/10 to-nature-green/10 flex items-center justify-center">
                 <ShoppingBag className="h-16 w-16 text-calming-blue/50" />
@@ -202,7 +202,7 @@ const Allshops = () => {
                 <p className="text-sm">{product.description}</p>
               </div>
 
-              <div className="space-y-4 p-5">
+              <div className="space-y-4 px-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-1">
                     {renderStars(product.rating)}
@@ -215,7 +215,7 @@ const Allshops = () => {
                 <button
                   onClick={() => addToCart(product.id)}
                   disabled={cartItems.includes(product.id) || !product.inStock}
-                  className="cursor-pointer bg-primary text-white py-[10px] w-full h-[60px] px-[14px] text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300"
+                  className="cursor-pointer bg-primary text-white py-[10px] w-full h-[60px] px-[14px] text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300 mt-5"
                 >
                   {cartItems.includes(product.id)
                     ? "Added to Cart!"

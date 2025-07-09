@@ -4,7 +4,15 @@ import { getImageSrc } from "../../utils/imageUtils";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 
-const links = ["Home", "About", "Services", "Contact", "Resources", "Events"];
+const links = [
+  "Home",
+  "About",
+  "Services",
+  "Contact",
+  "Resources",
+  "Events",
+  "Store",
+];
 
 const mobileLinks = [
   "Home",
@@ -13,6 +21,7 @@ const mobileLinks = [
   "Contact",
   "Resources",
   "Events",
+  "Store",
   "Get Involved",
 ];
 
@@ -71,7 +80,7 @@ const Navbar = () => {
         {/* links */}
         <div className="hidden lg:flex space-x-8">
           {links.map((item) => (
-            <div>
+            <div key={item}>
               <Link
                 to={`/${item === "Home" ? "" : item.toLowerCase()}`}
                 className="text-primary text-[16px] font-medium hover:font-bold transition-all duration-300 ease-in-out"
@@ -130,7 +139,7 @@ const Navbar = () => {
                   custom={index}
                   className={`${
                     item === "Get Involved"
-                      ? "bg-blue-600 py-2 px-4 rounded-lg hover:bg-blue-500 transition"
+                      ? "bg-primary py-2 px-4 rounded-lg hover:bg-blue-500 transition"
                       : "hover:text-neutral-200"
                   } text-white text-center`}
                   whileHover={{ x: 5 }}

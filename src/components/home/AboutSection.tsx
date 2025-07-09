@@ -25,7 +25,7 @@ const AboutSection = () => {
         {/* text flex */}
         <div className="max-w-[653px] mx-auto sm:mx-0">
           <div className="w-full">
-            <p className="text-[24px]">A Little About Us</p>
+            <p className="text-[24px]">Abiodun</p>
             <p className="text-sm xs:text-base md:text-lg ">
               <span className="font-bold rounded">Wholeness Haven </span>
               is a Dementia and Ageing Well-being Club dedicated to supporting

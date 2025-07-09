@@ -16,14 +16,14 @@ export const Home = () => {
     <div className="text-lg">
       <Hero />
       <AboutSection />
-      <Stories />
-      <OurServices />
-      <MeetTheDirector />
-      <Career />
-      <Activities />
-      <Blog />
-      <Contact />
-      <GetInvolved />
+      {/* <Stories /> */}
+      {/* <OurServices /> */}
+      {/* <MeetTheDirector /> */}
+      {/* <Career /> */}
+      {/* <Activities /> */}
+      {/* <Blog /> */}
+      {/* <Contact /> */}
+      {/* <GetInvolved /> */}
     </div>
   );
 };
