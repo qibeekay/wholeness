@@ -145,7 +145,7 @@ const Cart = () => {
               {cartItems.length} items in your cart
             </p>
           </div>
-          <Link to="/shop">
+          <Link to="/store">
             <button className="mb-6 bg-[#ECE1FA] text-primary text-sm sm:text-base rounded-[8px] cursor-pointer px-4 py-2 flex items-center">
               <ArrowLeft className="h-4 w-4" />
               <span>Continue Shopping</span>
