@@ -3,6 +3,9 @@ import { useState } from "react";
 import { getImageSrc } from "../../utils/imageUtils";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import { Toaster, toast } from "sonner";
 
 const links = [
   "Home",
@@ -22,11 +25,21 @@ const mobileLinks = [
   "Resources",
   "Events",
   "Store",
-  "Get Involved",
 ];
+
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  picture?: string;
+  // Add other user properties you expect from your backend
+}
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -65,6 +78,41 @@ const Navbar = () => {
     }),
   };
 
+  const login = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: async (codeResponse) => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/auth/google/callback.php`,
+          {
+            params: { code: codeResponse.code },
+          }
+        );
+
+        console.log("Login Successful:", response.data);
+        const userData = response.data.data;
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+        toast.success("Login successful");
+      } catch (err) {
+        toast.error("Authentication failed");
+        console.error(err);
+      }
+    },
+    onError: (error) => {
+      toast.error("Login Failed");
+      console.error("Login Failed:", error);
+    },
+    scope: "email profile",
+  });
+
+  const logOut = () => {
+    googleLogout();
+    setUser(null);
+    localStorage.removeItem("user");
+    toast.success("Logged out successfully");
+  };
+
   return (
     <nav className="fixed top-4 left-0 right-0 z-50 m-2">
       <div className="flex bg-white items-center justify-between p-[14px] max-w-[1600px] mx-auto rounded-full border">
@@ -92,10 +140,30 @@ const Navbar = () => {
         </div>
 
         {/* button */}
-        <div className="hidden md:block">
-          <button className="cursor-pointer bg-primary text-white py-[10px] w-[224px] h-[60px] px-[14px] text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300">
-            Get Involved
-          </button>
+        {/* auth section */}
+        <div className="hidden md:flex items-center gap-4">
+          {user ? (
+            <div className="flex items-center gap-2">
+              <img
+                src={user.picture || getImageSrc("default-avatar.png")}
+                alt="User profile"
+                className="w-8 h-8 rounded-full"
+              />
+              <button
+                onClick={logOut}
+                className="text-sm cursor-pointer text-gray-600 hover:text-gray-900"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => login()}
+              className="bg-primary text-white px-4 py-2 rounded-full hover:bg-blue-600 transition cursor-pointer"
+            >
+              Login
+            </button>
+          )}
         </div>
 
         {/* hamburger */}
@@ -147,10 +215,42 @@ const Navbar = () => {
                   {item}
                 </motion.a>
               ))}
+
+              {/* Add mobile auth section */}
+              {user ? (
+                <motion.div
+                  variants={itemVariants}
+                  initial="closed"
+                  animate="open"
+                  custom={mobileLinks.length}
+                  className="flex items-center justify-center gap-2"
+                >
+                  <img
+                    src={user.picture || getImageSrc("default-avatar.png")}
+                    alt="User profile"
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <button onClick={logOut} className="text-white text-sm">
+                    Logout
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.button
+                  variants={itemVariants}
+                  initial="closed"
+                  animate="open"
+                  custom={mobileLinks.length}
+                  onClick={() => login()}
+                  className="bg-white text-primary px-4 py-2 rounded-full hover:bg-gray-100 transition text-center"
+                >
+                  Login
+                </motion.button>
+              )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+      <Toaster />
     </nav>
   );
 };
