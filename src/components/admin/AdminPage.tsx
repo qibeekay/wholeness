@@ -1,3 +1,4 @@
+// Update AdminPage.tsx
 import React, { useState } from "react";
 import {
   Calendar,
@@ -6,10 +7,12 @@ import {
   FileText,
   Activity,
   Plus,
+  ShoppingBag,
 } from "lucide-react";
 import CreateEventModal from "./CreateEventModal";
 import CreateCourseModal from "./CreateCourseModal";
 import CreateBlogModal from "./CreateBlogModal";
+import CreateProductModal from "./CreateProductModal"; // Add this import
 import BlogManager from "./BlogManager";
 import CoursesTable from "./CoursesTable";
 import EventsTable from "./EventsTable";
@@ -17,12 +20,14 @@ import DasboardTab from "./tab/DasboardTab";
 import EventTab from "./tab/EventTab";
 import CourseTab from "./tab/CourseTab";
 import BlogsTab from "./tab/BlogsTab";
+import StoreTab from "./tab/StoreTab"; // Add this import
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [createEventOpen, setCreateEventOpen] = useState(false);
   const [createCourseOpen, setCreateCourseOpen] = useState(false);
   const [createBlogOpen, setCreateBlogOpen] = useState(false);
+  const [createProductOpen, setCreateProductOpen] = useState(false); // Add this state
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -32,6 +37,7 @@ const AdminPage = () => {
             setCreateBlogOpen={setCreateBlogOpen}
             setCreateEventOpen={setCreateEventOpen}
             setCreateCourseOpen={setCreateCourseOpen}
+            setCreateProductOpen={setCreateProductOpen}
           />
         );
       case "events":
@@ -40,6 +46,8 @@ const AdminPage = () => {
         return <CourseTab setCreateCourseOpen={setCreateCourseOpen} />;
       case "blogs":
         return <BlogsTab setCreateBlogOpen={setCreateBlogOpen} />;
+      case "store":
+        return <StoreTab setCreateProductOpen={setCreateProductOpen} />;
       default:
         return null;
     }
@@ -54,14 +62,14 @@ const AdminPage = () => {
             Admin Dashboard
           </h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-            Manage events, courses, blogs and content for Wholeness Haven CIC
+            Manage events, courses, blogs, and store for Wholeness Haven CIC
           </p>
         </div>
 
         {/* Custom Tab System */}
         <div className="space-y-6">
           {/* Tab Buttons */}
-          <div className="grid w-full grid-cols-4 border-b border-gray-200">
+          <div className="grid w-full grid-cols-5 border-b border-gray-200">
             <button
               className={`py-4 px-1 text-center border-b-2 font-medium text-sm cursor-pointer ${
                 activeTab === "dashboard"
@@ -102,6 +110,16 @@ const AdminPage = () => {
             >
               Blogs
             </button>
+            <button
+              className={`py-4 px-1 text-center border-b-2 font-medium text-sm cursor-pointer ${
+                activeTab === "store"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+              onClick={() => setActiveTab("store")}
+            >
+              Store
+            </button>
           </div>
 
           {/* Tab Content */}
@@ -120,6 +138,10 @@ const AdminPage = () => {
         <CreateBlogModal
           open={createBlogOpen}
           onOpenChange={setCreateBlogOpen}
+        />
+        <CreateProductModal
+          open={createProductOpen}
+          onOpenChange={setCreateProductOpen}
         />
       </div>
     </div>

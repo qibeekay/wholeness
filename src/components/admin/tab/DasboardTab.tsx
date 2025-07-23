@@ -5,18 +5,21 @@ import {
   FileText,
   Plus,
   Users,
+  ShoppingBag,
 } from "lucide-react";
 
 interface Props {
   setCreateEventOpen: (open: boolean) => void;
   setCreateBlogOpen: (open: boolean) => void;
   setCreateCourseOpen: (open: boolean) => void;
+  setCreateProductOpen: (open: boolean) => void;
 }
 
 const DasboardTab = ({
   setCreateEventOpen,
   setCreateBlogOpen,
   setCreateCourseOpen,
+  setCreateProductOpen,
 }: Props) => {
   return (
     <div className="space-y-6">
@@ -59,12 +62,14 @@ const DasboardTab = ({
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
           <div className="flex flex-row items-center justify-between pb-2">
-            <h3 className="text-sm font-medium text-gray-500">Total Users</h3>
-            <Users className="h-5 w-5 text-purple-500" />
+            <h3 className="text-sm font-medium text-gray-500">
+              Store Products
+            </h3>
+            <ShoppingBag className="h-5 w-5 text-purple-500" />
           </div>
           <div className="mt-2">
-            <div className="text-2xl font-bold text-gray-800">1,234</div>
-            <p className="text-xs text-gray-500 mt-1">+12% from last month</p>
+            <div className="text-2xl font-bold text-gray-800">36</div>
+            <p className="text-xs text-gray-500 mt-1">+5 from last month</p>
           </div>
         </div>
       </div>
@@ -103,13 +108,11 @@ const DasboardTab = ({
               </div>
             </div>
             <div className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-              <FileText className="h-5 w-5 text-orange-500 flex-shrink-0" />
+              <ShoppingBag className="h-5 w-5 text-purple-500 flex-shrink-0" />
               <div>
-                <p className="font-medium text-gray-800">
-                  New blog post published
-                </p>
+                <p className="font-medium text-gray-800">New product added</p>
                 <p className="text-sm text-gray-500">
-                  Supporting Families - 6 hours ago
+                  Memory Activities Workbook - 5 hours ago
                 </p>
               </div>
             </div>
@@ -146,9 +149,12 @@ const DasboardTab = ({
               <FileText className="h-5 w-5 mr-3 text-orange-500" />
               <span>Write Blog Post</span>
             </button>
-            <button className="cursor-pointer w-full flex items-center justify-start px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-700">
-              <Users className="h-5 w-5 mr-3 text-purple-500" />
-              <span>View All Users</span>
+            <button
+              className="cursor-pointer w-full flex items-center justify-start px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
+              onClick={() => setCreateProductOpen(true)}
+            >
+              <ShoppingBag className="h-5 w-5 mr-3 text-purple-500" />
+              <span>Add Store Product</span>
             </button>
           </div>
         </div>

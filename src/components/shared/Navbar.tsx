@@ -31,7 +31,7 @@ interface UserData {
   id: string;
   name: string;
   email: string;
-  picture?: string;
+  avatar?: string;
   // Add other user properties you expect from your backend
 }
 
@@ -82,12 +82,9 @@ const Navbar = () => {
     flow: "auth-code",
     onSuccess: async (codeResponse) => {
       try {
-        const response = await axios.get(
-          `${API_URL}/auth/google/callback.php`,
-          {
-            params: { code: codeResponse.code },
-          }
-        );
+        const response = await axios.get(`${API_URL}/google/callback.php`, {
+          params: { code: codeResponse.code },
+        });
 
         console.log("Login Successful:", response.data);
         const userData = response.data.data;
@@ -112,6 +109,8 @@ const Navbar = () => {
     localStorage.removeItem("user");
     toast.success("Logged out successfully");
   };
+
+  console.log(user);
 
   return (
     <nav className="fixed top-4 left-0 right-0 z-50 m-2">
@@ -145,7 +144,7 @@ const Navbar = () => {
           {user ? (
             <div className="flex items-center gap-2">
               <img
-                src={user.picture || getImageSrc("default-avatar.png")}
+                src={user.avatar || getImageSrc("default-avatar.png")}
                 alt="User profile"
                 className="w-8 h-8 rounded-full"
               />
@@ -226,7 +225,7 @@ const Navbar = () => {
                   className="flex items-center justify-center gap-2"
                 >
                   <img
-                    src={user.picture || getImageSrc("default-avatar.png")}
+                    src={user.avatar || getImageSrc("default-avatar.png")}
                     alt="User profile"
                     className="w-8 h-8 rounded-full"
                   />
