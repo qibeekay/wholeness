@@ -84,6 +84,7 @@ const Navbar = () => {
       try {
         const response = await axios.get(`${API_URL}/google/callback.php`, {
           params: { code: codeResponse.code },
+          withCredentials: true,
         });
 
         console.log("Login Successful:", response.data);

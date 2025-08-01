@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ShoppingBag,
   Minus,
@@ -8,91 +8,58 @@ import {
   CreditCard,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCart } from "../../components/context/CartContext";
+import { GetProducts } from "../../api/store/Product";
+import StripeCheckout from "../hooks/StripeCheckout";
 
 interface Product {
   id: number;
   name: string;
   description: string;
   price: number;
-  category: "books" | "apparel" | "accessories" | "resources";
-  rating: number;
-  reviews: number;
   image: string;
   inStock: boolean;
 }
 
-interface CartItem extends Product {
-  quantity: number;
-}
-
 const Cart = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const { items, removeItem, updateQty, clearCart, totalItems } = useCart();
+  const [products, setProducts] = useState<Product[]>([]);
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [hasFetchedProducts, setHasFetchedProducts] = useState(false);
 
-  // Mock products data (in a real app, this would come from a context or API)
-  const products: Product[] = [
-    {
-      id: 1,
-      name: "The Complete Guide to Dementia Care",
-      description:
-        "Comprehensive handbook for families navigating dementia care journey.",
-      price: 24.99,
-      category: "books",
-      rating: 4.8,
-      reviews: 156,
-      image: "/placeholder.svg",
-      inStock: true,
-    },
-    {
-      id: 4,
-      name: "Mindful Moments Mug",
-      description: "Inspirational ceramic mug with dementia awareness message.",
-      price: 12.99,
-      category: "accessories",
-      rating: 4.7,
-      reviews: 67,
-      image: "/placeholder.svg",
-      inStock: true,
-    },
-  ];
+  const getProduct = async () => {
+    try {
+      const res = await GetProducts();
+      setProducts(res);
+      setHasFetchedProducts(true);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
   useEffect(() => {
-    // Mock cart items (in a real app, this would come from localStorage or context)
-    const mockCartItems: CartItem[] = [
-      { ...products[0], quantity: 1 },
-      { ...products[1], quantity: 2 },
-    ];
-    setCartItems(mockCartItems);
-  }, []);
-
-  const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity === 0) {
-      removeItem(id);
-      return;
+    if (!hasFetchedProducts) {
+      getProduct();
     }
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
+  }, [hasFetchedProducts]);
 
-  const removeItem = (id: number) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  const cartProducts = items
+    .map((item) => {
+      const product = products.find((p) => p.id === item.id);
+      return product ? { ...product, quantity: item.qty } : null;
+    })
+    .filter(Boolean) as (Product & { quantity: number })[];
 
   const applyPromoCode = () => {
     if (promoCode.toLowerCase() === "welcome10") {
       setDiscount(0.1);
-      console.log("Promo code applied: 10% discount");
     } else {
       setDiscount(0);
-      console.log("Invalid promo code");
     }
   };
 
-  const subtotal = cartItems.reduce(
+  const subtotal = cartProducts.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
@@ -110,7 +77,7 @@ const Cart = () => {
     return colors[category as keyof typeof colors] || "bg-gray-500";
   };
 
-  if (cartItems.length === 0) {
+  if (totalItems === 0) {
     return (
       <div className="min-h-screen mt-20 bg-gray-50 flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -142,7 +109,7 @@ const Cart = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
             <p className="text-gray-600 mt-1">
-              {cartItems.length} items in your cart
+              {totalItems} {totalItems === 1 ? "item" : "items"} in your cart
             </p>
           </div>
           <Link to="/store">
@@ -156,7 +123,7 @@ const Cart = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cartItems.map((item) => (
+            {cartProducts.map((item) => (
               <div key={item.id} className="overflow-hidden">
                 <div className="p-6 bg-white rounded-2xl">
                   <div className="flex items-start space-x-4">
@@ -173,14 +140,6 @@ const Cart = () => {
                           <p className="text-sm text-gray-600 mb-2">
                             {item.description}
                           </p>
-                          <p
-                            className={`${getCategoryColor(
-                              item.category
-                            )} text-white inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-primary`}
-                          >
-                            {item.category.charAt(0).toUpperCase() +
-                              item.category.slice(1)}
-                          </p>
                         </div>
                         <button
                           onClick={() => removeItem(item.id)}
@@ -195,7 +154,7 @@ const Cart = () => {
                           <button
                             className="border cursor-pointer border-gray-500 rounded p-2"
                             onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
+                              updateQty(item.id, item.quantity - 1)
                             }
                             disabled={item.quantity <= 1}
                           >
@@ -207,7 +166,7 @@ const Cart = () => {
                           <button
                             className="border cursor-pointer border-gray-500 rounded p-2"
                             onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
+                              updateQty(item.id, item.quantity + 1)
                             }
                           >
                             <Plus className="h-5 w-5" />
@@ -218,7 +177,7 @@ const Cart = () => {
                             £{(item.price * item.quantity).toFixed(2)}
                           </div>
                           <div className="text-sm text-gray-600">
-                            £{item.price.toFixed(2)} each
+                            £{item.price} each
                           </div>
                         </div>
                       </div>
@@ -270,17 +229,15 @@ const Cart = () => {
                 )}
 
                 <div className="space-y-3 mt-10">
-                  <button className="cursor-pointer bg-primary text-white py-[10px] w-full h-[60px] px-[14px] text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300 flex items-center justify-center gap-4">
+                  {/* <button className="cursor-pointer bg-primary text-white py-[10px] w-full h-[60px] px-[14px] text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300 flex items-center justify-center gap-4">
                     <CreditCard className="h-7 w-7 mr-2" />
                     Proceed to Checkout
-                  </button>
+                  </button> */}
+                  <div className="space-y-3 mt-10">
+                    {/* Replace the button with StripeCheckout component */}
+                    <StripeCheckout items={items} total={total} />
+                  </div>
                 </div>
-
-                {/* <div className="text-xs text-gray-500 space-y-1">
-                  <p>• Secure checkout with SSL encryption</p>
-                  <p>• 30-day return policy</p>
-                  <p>• Customer support available</p>
-                </div> */}
               </div>
             </div>
           </div>

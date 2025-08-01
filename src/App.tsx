@@ -9,21 +9,29 @@ import Events from "./pages/Events";
 import Shop from "./pages/Shop";
 import Carts from "./pages/Carts";
 import Admin from "./pages/Admin/Admin";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { CartProvider } from "./components/context/CartContext";
 
 function App() {
+  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
   return (
     <div className="font-inter">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/store" element={<Shop />} />
-        <Route path="/cart" element={<Carts />} />
-        <Route path="/admin" element={<Admin />} />
-      </Routes>
+      <Elements stripe={stripePromise}>
+        <CartProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/store" element={<Shop />} />
+            <Route path="/cart" element={<Carts />} />
+            <Route path="/admin" element={<Admin />} />
+          </Routes>
+        </CartProvider>
+      </Elements>
       <Footer />
     </div>
   );

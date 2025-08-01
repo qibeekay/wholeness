@@ -1,94 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
 import { ShoppingBag, Star, BookOpen, Shirt, Coffee } from "lucide-react";
 import { Link } from "react-router-dom";
+import { GetProducts } from "../../api/store/Product";
+import { useCart } from "../../components/context/CartContext";
 
 interface Product {
   id: number;
   name: string;
   description: string;
   price: number;
-  category: "books" | "apparel" | "accessories" | "resources";
-  rating: number;
-  reviews: number;
   image: string;
   inStock: boolean;
 }
 
 const Allshops = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [cartItems, setCartItems] = useState<number[]>([]);
+  const [products, setProducts] = React.useState<Product[]>([]);
+  const { items, addItem, totalItems } = useCart();
 
-  const products: Product[] = [
-    {
-      id: 1,
-      name: "The Complete Guide to Dementia Care",
-      description:
-        "Comprehensive handbook for families navigating dementia care journey.",
-      price: 24.99,
-      category: "books",
-      rating: 4.8,
-      reviews: 156,
-      image: "/placeholder.svg",
-      inStock: true,
-    },
-    {
-      id: 2,
-      name: "Memory Activities Workbook",
-      description:
-        "Engaging activities and exercises designed to stimulate memory and cognition.",
-      price: 18.5,
-      category: "books",
-      rating: 4.6,
-      reviews: 89,
-      image: "/placeholder.svg",
-      inStock: true,
-    },
-    {
-      id: 3,
-      name: "Wholeness Haven T-Shirt",
-      description: "Comfortable cotton t-shirt supporting dementia awareness.",
-      price: 19.99,
-      category: "apparel",
-      rating: 4.5,
-      reviews: 34,
-      image: "/placeholder.svg",
-      inStock: true,
-    },
-    {
-      id: 4,
-      name: "Mindful Moments Mug",
-      description: "Inspirational ceramic mug with dementia awareness message.",
-      price: 12.99,
-      category: "accessories",
-      rating: 4.7,
-      reviews: 67,
-      image: "/placeholder.svg",
-      inStock: true,
-    },
-    {
-      id: 5,
-      name: "Communication Cards Set",
-      description: "Visual communication aids for individuals with dementia.",
-      price: 29.99,
-      category: "resources",
-      rating: 4.9,
-      reviews: 123,
-      image: "/placeholder.svg",
-      inStock: false,
-    },
-    {
-      id: 6,
-      name: "Caregiver Self-Care Journal",
-      description:
-        "Guided journal for caregiver reflection and self-care tracking.",
-      price: 16.75,
-      category: "books",
-      rating: 4.4,
-      reviews: 78,
-      image: "/placeholder.svg",
-      inStock: true,
-    },
-  ];
+  const getProduct = async () => {
+    const res = await GetProducts();
+    setProducts(res);
+  };
+
+  React.useEffect(() => {
+    getProduct();
+  }, []);
 
   const categories = [
     { value: "all", label: "All Products", icon: ShoppingBag },
@@ -108,27 +44,8 @@ const Allshops = () => {
     return colors[category as keyof typeof colors] || "bg-gray-500";
   };
 
-  const filteredProducts =
-    selectedCategory === "all"
-      ? products
-      : products.filter((product) => product.category === selectedCategory);
-
-  const addToCart = (productId: number) => {
-    setCartItems((prev) => [...prev, productId]);
-    console.log(`Added product ${productId} to cart`);
-  };
-
-  const renderStars = (rating: number) => {
-    return [...Array(5)].map((_, i) => (
-      <Star
-        key={i}
-        className={`h-4 w-4 ${
-          i < Math.floor(rating)
-            ? "text-yellow-400 fill-current"
-            : "text-gray-300"
-        }`}
-      />
-    ));
+  const isInCart = (id: number) => {
+    return items.some((item) => item.id === id);
   };
 
   return (
@@ -145,48 +62,23 @@ const Allshops = () => {
           </p>
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
-          {categories.map((category) => (
-            <button
-              key={category.value}
-              //   variant={
-              //     selectedCategory === category.value ? "default" : "outline"
-              //   }
-              onClick={() => setSelectedCategory(category.value)}
-              className={`transition-all duration-200 text-sm sm:text-base rounded-[8px] cursor-pointer px-4 py-2 flex items-center gap-4 ${
-                selectedCategory === category.value
-                  ? "bg-primary text-white"
-                  : "bg-[#ECE1FA] text-primary"
-              }`}
-            >
-              <category.icon className="h-4 w-4" />
-              <span>{category.label}</span>
-            </button>
-          ))}
-        </div>
-
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-20">
-          {filteredProducts.map((product) => (
+          {products.map((product) => (
             <div
               key={product.id}
               className="card-hover overflow-hidden cursor-pointer rounded-[16px] bg-white py-10 "
             >
-              <div className="h-48 bg-gradient-to-br from-calming-blue/10 to-nature-green/10 flex items-center justify-center">
-                <ShoppingBag className="h-16 w-16 text-calming-blue/50" />
+              <div className="h-48 overflow-hidden bg-gradient-to-br from-calming-blue/10 to-nature-green/10 flex items-center justify-center px-5 rounded-md">
+                <img
+                  className="w-full h-full object-cover object-center"
+                  src={product.image}
+                  alt=""
+                />
               </div>
 
               <div className="p-5">
-                <div className="flex items-start justify-between mb-2">
-                  <p
-                    className={`${getCategoryColor(
-                      product.category
-                    )} text-white inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-primary`}
-                  >
-                    {product.category.charAt(0).toUpperCase() +
-                      product.category.slice(1)}
-                  </p>
+                <div className="flex items-start justify-end mb-2">
                   <div className="text-right">
                     <div className="text-2xl font-bold text-gray-900">
                       £{product.price}
@@ -203,21 +95,12 @@ const Allshops = () => {
               </div>
 
               <div className="space-y-4 px-5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-1">
-                    {renderStars(product.rating)}
-                    <span className="text-sm text-gray-600 ml-2">
-                      {product.rating} ({product.reviews} reviews)
-                    </span>
-                  </div>
-                </div>
-
                 <button
-                  onClick={() => addToCart(product.id)}
-                  disabled={cartItems.includes(product.id) || !product.inStock}
+                  onClick={() => addItem(product.id)}
+                  disabled={isInCart(product.id) || !product.inStock}
                   className="cursor-pointer bg-primary text-white py-[10px] w-full h-[60px] px-[14px] text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300 mt-5"
                 >
-                  {cartItems.includes(product.id)
+                  {isInCart(product.id)
                     ? "Added to Cart!"
                     : !product.inStock
                     ? "Out of Stock"
@@ -228,7 +111,7 @@ const Allshops = () => {
           ))}
         </div>
 
-        {filteredProducts.length === 0 && (
+        {products.length === 0 && (
           <div className="text-center py-12">
             <ShoppingBag className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -239,13 +122,13 @@ const Allshops = () => {
         )}
 
         {/* Cart Summary */}
-        {cartItems.length > 0 && (
+        {totalItems > 0 && (
           <div className="fixed bottom-6 right-6 bg-white rounded-lg shadow-lg p-4 border">
             <div className="flex items-center space-x-3">
               <ShoppingBag className="h-6 w-6 text-calming-blue" />
               <div>
                 <div className="font-semibold">
-                  {cartItems.length} items in cart
+                  {totalItems} {totalItems === 1 ? "item" : "items"} in cart
                 </div>
                 <div className="text-sm text-gray-600">Ready to checkout</div>
               </div>
