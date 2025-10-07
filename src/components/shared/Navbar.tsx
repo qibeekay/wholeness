@@ -12,7 +12,7 @@ const links = [
   "About",
   "Services",
   "Contact",
-  "Resources",
+  "Blogs",
   "Events",
   "Store",
 ];
@@ -22,7 +22,7 @@ const mobileLinks = [
   "About",
   "Services",
   "Contact",
-  "Resources",
+  "Blogs",
   "Events",
   "Store",
 ];
@@ -250,7 +250,6 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <Toaster />
     </nav>
   );
 };

@@ -5,10 +5,10 @@ import { toast } from "sonner";
 const URL = import.meta.env.VITE_API_URL;
 const bearer = import.meta.env.VITE_BEARER_TOKEN;
 
-// get chat
-export const GetProducts = async () => {
+// get blogs
+export const GetBlogs = async () => {
   try {
-    const response = await axios.get(`${URL}/store/product.php`, {
+    const response = await axios.get(`${URL}/blog/blogs.php`, {
       headers: {
         Authorization: `Bearer ${bearer}`,
       },
@@ -27,17 +27,16 @@ export const GetProducts = async () => {
   }
 };
 
-// creates a new porduct
-export const CreateNewProduct = async (productData: {
-  name: string;
-  description: string;
-  price: number;
-  quantity: number;
-  inStock: number;
+// creates a new blog
+export const CreateNewBlog = async (productData: {
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
   image: File | null;
 }) => {
   try {
-    const response = await axios.post(`${URL}/store/product.php`, productData, {
+    const response = await axios.post(`${URL}/blog/blogs.php`, productData, {
       headers: {
         Authorization: `Bearer ${bearer}`,
         "Content-Type": "multipart/form-data",
@@ -61,10 +60,10 @@ export const CreateNewProduct = async (productData: {
   }
 };
 
-// delete a product
-export const DeleteProduct = async (id: number) => {
+// delete a blog
+export const DeleteBlog = async (id: number) => {
   try {
-    const response = await axios.delete(`${URL}/store/product.php?id=${id}`, {
+    const response = await axios.delete(`${URL}/blog/blogs.php?id=${id}`, {
       headers: {
         Authorization: `Bearer ${bearer}`,
       },
@@ -87,20 +86,20 @@ export const DeleteProduct = async (id: number) => {
   }
 };
 
-export const EditProduct = async (
+// edit blogs
+export const EditBlog = async (
   productData: {
-    name: string;
-    description: string;
-    price: number;
-    quantity: number;
-    inStock: number;
+    title: string;
+    excerpt: string;
+    content: string;
+    author: string;
     image: File | null;
   },
   id: number
 ) => {
   try {
     const response = await axios.post(
-      `${URL}/store/product.php?id=${id}`,
+      `${URL}/blog/blogs.php?id=${id}`,
       productData,
       {
         headers: {
@@ -127,18 +126,27 @@ export const EditProduct = async (
   }
 };
 
-// creates stripes payment intents  (session cookie)
-export const createPaymentIntent = (items: { id: number; qty: number }[]) =>
-  axios.post(
-    `${URL}/cart/checkout.php`,
-    { items },
-    { headers: { "Content-Type": "application/json" }, withCredentials: true }
-  );
+// get single blog
+export const GetSingleBlog = async (excerpt: string) => {
+  try {
+    const response = await axios.get(
+      `${URL}/blog/blogs.php?excerpt=${excerpt}`,
+      {
+        headers: {
+          Authorization: `Bearer ${bearer}`,
+        },
+      }
+    );
 
-// confirms and complete payment for product
-export const confirmCheckout = (paymentIntentId: string) =>
-  axios.post(
-    `${URL}/cart/confirm-checkout.php`,
-    { paymentIntentId },
-    { headers: { "Content-Type": "application/json" }, withCredentials: true }
-  );
+    if (response.data.success === false) {
+      toast.error(response.data.message);
+      // return false; // Verification failed
+      return [];
+    } else {
+      return response.data.data;
+    }
+  } catch (error: any) {
+    console.error("Fetch error", error);
+    throw new Error(error.response?.data?.message || "Failed to fetch");
+  }
+};

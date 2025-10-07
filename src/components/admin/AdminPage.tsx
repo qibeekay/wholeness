@@ -1,4 +1,3 @@
-// Update AdminPage.tsx
 import React, { useState } from "react";
 import {
   Calendar,
@@ -12,7 +11,7 @@ import {
 import CreateEventModal from "./CreateEventModal";
 import CreateCourseModal from "./CreateCourseModal";
 import CreateBlogModal from "./CreateBlogModal";
-import CreateProductModal from "./CreateProductModal"; // Add this import
+import CreateProductModal from "./CreateProductModal";
 import BlogManager from "./BlogManager";
 import CoursesTable from "./CoursesTable";
 import EventsTable from "./EventsTable";
@@ -20,14 +19,19 @@ import DasboardTab from "./tab/DasboardTab";
 import EventTab from "./tab/EventTab";
 import CourseTab from "./tab/CourseTab";
 import BlogsTab from "./tab/BlogsTab";
-import StoreTab from "./tab/StoreTab"; // Add this import
+import StoreTab from "./tab/StoreTab";
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [createEventOpen, setCreateEventOpen] = useState(false);
   const [createCourseOpen, setCreateCourseOpen] = useState(false);
   const [createBlogOpen, setCreateBlogOpen] = useState(false);
-  const [createProductOpen, setCreateProductOpen] = useState(false); // Add this state
+  const [createProductOpen, setCreateProductOpen] = useState(false);
+  const [refreshBlogs, setRefreshBlogs] = useState(0); // Add this state
+
+  const handleBlogCreated = () => {
+    setRefreshBlogs((prev) => prev + 1); // Increment to trigger refresh
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -45,7 +49,13 @@ const AdminPage = () => {
       case "courses":
         return <CourseTab setCreateCourseOpen={setCreateCourseOpen} />;
       case "blogs":
-        return <BlogsTab setCreateBlogOpen={setCreateBlogOpen} />;
+        return (
+          <BlogsTab
+            setCreateBlogOpen={setCreateBlogOpen}
+            refreshBlogs={refreshBlogs}
+            onBlogCreated={handleBlogCreated}
+          />
+        );
       case "store":
         return <StoreTab setCreateProductOpen={setCreateProductOpen} />;
       default:
@@ -138,6 +148,7 @@ const AdminPage = () => {
         <CreateBlogModal
           open={createBlogOpen}
           onOpenChange={setCreateBlogOpen}
+          onBlogCreated={handleBlogCreated} // Pass the callback here
         />
         <CreateProductModal
           open={createProductOpen}

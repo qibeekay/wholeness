@@ -128,7 +128,7 @@ const BlogItem: React.FC<BlogItemProps> = ({ blog, onBlogClick }) => {
   );
 };
 
-const Blog = () => {
+const AllBlogs = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -154,19 +154,24 @@ const Blog = () => {
     navigate(`/blogs/${encodeURIComponent(excerpts)}`);
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-primary border-solid"></div>
+      </div>
+    );
+  }
+
   return (
     <section className="bg-[#F9F5FF]">
       <div className="max-w-[1350px] mx-auto px-4 py-6 sm:py-8 md:py-20">
         {/* Head section */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 sm:mb-8">
-          <h1 className="text-base xs:text-[18px] md:text-[32px] font-jakarta font-bold text-primary max-w-[219px]">
-            Read from our blog post
+          <h1 className="text-base xs:text-[18px] md:text-[32px] font-jakarta font-bold text-primary max-w-[400px]">
+            Latest blog posts
           </h1>
           <div>
-            <button
-              onClick={() => navigate("/blogs")}
-              className="cursor-pointer bg-primary text-white py-2 sm:py-[10px] w-[180px] sm:w-[224px] h-[48px] sm:h-[60px] px-4 text-sm sm:text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300"
-            >
+            <button className="cursor-pointer bg-primary text-white py-2 sm:py-[10px] w-[180px] sm:w-[224px] h-[48px] sm:h-[60px] px-4 text-sm sm:text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300">
               See All
             </button>
           </div>
@@ -174,7 +179,7 @@ const Blog = () => {
 
         {/* Blog posts */}
         <div className="flex items-center justify-center gap-y-10 md:gap-5 flex-wrap">
-          {blogs?.slice(0, 3)?.map((blog) => (
+          {blogs?.map((blog) => (
             <BlogItem key={blog.id} blog={blog} onBlogClick={singleBlog} />
           ))}
         </div>
@@ -183,4 +188,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default AllBlogs;

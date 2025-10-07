@@ -89,7 +89,7 @@ const Cart = () => {
             <p className="text-gray-600 mb-8">
               Looks like you haven't added anything to your cart yet.
             </p>
-            <Link to="/marketplace">
+            <Link to="/store">
               <button className="cursor-pointer bg-primary text-white py-[10px] w-full h-[60px] px-[14px] text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300 flex items-center justify-center gap-4">
                 <ArrowLeft className="h-4 w-4" />
                 <span>Continue Shopping</span>

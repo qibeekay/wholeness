@@ -4,9 +4,15 @@ import { Plus } from "lucide-react";
 
 interface Props {
   setCreateBlogOpen: (open: boolean) => void;
+  refreshBlogs?: number;
+  onBlogCreated?: () => void;
 }
 
-const BlogsTab = ({ setCreateBlogOpen }: Props) => {
+const BlogsTab = ({
+  setCreateBlogOpen,
+  refreshBlogs,
+  onBlogCreated,
+}: Props) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -22,7 +28,10 @@ const BlogsTab = ({ setCreateBlogOpen }: Props) => {
           Write Blog Post
         </button>
       </div>
-      <BlogManager />
+      <BlogManager
+        refreshTrigger={refreshBlogs}
+        onBlogCreated={onBlogCreated}
+      />
     </div>
   );
 };

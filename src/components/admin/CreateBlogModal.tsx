@@ -1,37 +1,81 @@
 import React, { useState } from "react";
 import { FileText } from "lucide-react";
+import QuillToolbar, { formats, modules } from "../../utils/QuillToolBar";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
+import ImageUpload from "../shared/ImageUploadProps";
+import { CreateNewBlog } from "../../api/blog/Blog";
 
 interface CreateBlogModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onBlogCreated: () => void; // Add this prop
 }
 
-const CreateBlogModal = ({ open, onOpenChange }: CreateBlogModalProps) => {
+const CreateBlogModal = ({
+  open,
+  onOpenChange,
+  onBlogCreated,
+}: CreateBlogModalProps) => {
+  const [excerpt, setExcerpt] = useState("");
+  const [value, setValue] = useState("");
+  const [title, setTitle] = useState("");
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [blogForm, setBlogForm] = useState({
     title: "",
     excerpt: "",
     content: "",
-    category: "",
-    status: "draft" as "published" | "draft",
     author: "",
-    readTime: "",
-    image: "",
+    image: File,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleImageChange = (file: File | null) => {
+    setProfileImageFile(file);
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+
+    // Generate excerpt from the first 5 words of the title, replacing spaces with hyphens
+    const titleWords = newTitle.split(" ");
+    const firstFiveWords = titleWords.slice(0, 5).join("-");
+    setExcerpt(firstFiveWords);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Blog created:", blogForm);
-    setBlogForm({
-      title: "",
-      excerpt: "",
-      content: "",
-      category: "",
-      status: "draft",
-      author: "",
-      readTime: "",
-      image: "",
-    });
-    onOpenChange(false);
+    setLoading(true);
+    const payload = {
+      ...blogForm,
+      title,
+      excerpt,
+      content: value,
+      image: profileImageFile,
+    };
+    try {
+      await CreateNewBlog(payload);
+      onOpenChange(false);
+      onBlogCreated(); // Call the callback to refresh the blog list
+
+      // Reset form
+      setTitle("");
+      setExcerpt("");
+      setValue("");
+      setBlogForm({
+        title: "",
+        excerpt: "",
+        content: "",
+        author: "",
+        image: File,
+      });
+      setProfileImageFile(null);
+    } catch (error) {
+      console.error("Error creating blog:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!open) return null;
@@ -83,53 +127,38 @@ const CreateBlogModal = ({ open, onOpenChange }: CreateBlogModalProps) => {
               <input
                 id="blog-title"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-primary"
-                value={blogForm.title}
-                onChange={(e) =>
-                  setBlogForm({ ...blogForm, title: e.target.value })
-                }
+                value={title}
+                onChange={handleTitleChange}
                 placeholder="Enter blog title"
                 required
               />
             </div>
 
             <div>
-              <label
-                htmlFor="blog-excerpt"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Excerpt
-              </label>
-              <textarea
-                id="blog-excerpt"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-primary"
-                value={blogForm.excerpt}
-                onChange={(e) =>
-                  setBlogForm({ ...blogForm, excerpt: e.target.value })
-                }
-                placeholder="Brief description of the blog post"
-                rows={2}
-                required
+              <label htmlFor="">Blog Excerpts</label>
+              <input
+                type="text"
+                className="w-full border border-[#D0D5DD] p-[16px] rounded-md outline-[#FA9874] mt-1"
+                placeholder="Enter Excerpts"
+                value={excerpt}
+                onChange={(e) => setExcerpt(e.target.value)}
               />
             </div>
 
             <div>
-              <label
-                htmlFor="blog-content"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Content
-              </label>
-              <textarea
-                id="blog-content"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-primary"
-                value={blogForm.content}
-                onChange={(e) =>
-                  setBlogForm({ ...blogForm, content: e.target.value })
-                }
-                placeholder="Full blog content"
-                rows={6}
-                required
-              />
+              <label htmlFor="">Blog Content</label>
+              <div className="">
+                <QuillToolbar toolbarId={"t1"} />
+                <ReactQuill
+                  className="border border-[#D0D5DD] outline-[#FA9874] bg-white !h-[200px]"
+                  theme="snow"
+                  value={value}
+                  onChange={setValue}
+                  modules={modules("t1")}
+                  formats={formats}
+                  placeholder="Enter text here..."
+                />
+              </div>
             </div>
 
             <div>
@@ -151,88 +180,11 @@ const CreateBlogModal = ({ open, onOpenChange }: CreateBlogModalProps) => {
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="blog-image"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Featured Image URL
-              </label>
-              <input
-                id="blog-image"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-primary"
-                value={blogForm.image}
-                onChange={(e) =>
-                  setBlogForm({ ...blogForm, image: e.target.value })
-                }
-                placeholder="https://example.com/image.jpg"
+            <div className="">
+              <ImageUpload
+                onImageChange={handleImageChange}
+                label="Article Image"
               />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="blog-category"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Category
-                </label>
-                <select
-                  id="blog-category"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-primary"
-                  value={blogForm.category}
-                  onChange={(e) =>
-                    setBlogForm({ ...blogForm, category: e.target.value })
-                  }
-                >
-                  <option value="">Select category</option>
-                  <option value="education">Education</option>
-                  <option value="support">Support</option>
-                  <option value="news">News</option>
-                  <option value="resources">Resources</option>
-                </select>
-              </div>
-              <div>
-                <label
-                  htmlFor="blog-read-time"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Read Time
-                </label>
-                <input
-                  id="blog-read-time"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-primary"
-                  value={blogForm.readTime}
-                  onChange={(e) =>
-                    setBlogForm({ ...blogForm, readTime: e.target.value })
-                  }
-                  placeholder="5 min read"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="blog-status"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Status
-              </label>
-              <select
-                id="blog-status"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-primary"
-                value={blogForm.status}
-                onChange={(e) =>
-                  setBlogForm({
-                    ...blogForm,
-                    status: e.target.value as "published" | "draft",
-                  })
-                }
-              >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
             </div>
 
             {/* Modal Footer */}
@@ -246,9 +198,10 @@ const CreateBlogModal = ({ open, onOpenChange }: CreateBlogModalProps) => {
               </button>
               <button
                 type="submit"
-                className="cursor-pointer px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                disabled={loading}
+                className="cursor-pointer px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
-                Create Blog Post
+                {loading ? "Creating..." : "Create Blog Post"}
               </button>
             </div>
           </form>

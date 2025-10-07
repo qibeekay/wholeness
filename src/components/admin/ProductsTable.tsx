@@ -9,87 +9,48 @@ import {
   Coffee,
   ShoppingBag,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { DeleteProduct, GetProducts } from "../../api/store/Product";
+import EditProductModal from "./editModals/EditProductModal";
 
 interface Product {
   id: number;
   name: string;
   description: string;
+  quantity: number;
   price: number;
-  category: "books" | "apparel" | "accessories" | "resources";
-  rating: number;
-  reviews: number;
-  inStock: boolean;
+  inStock: any;
 }
 
 const ProductsTable = () => {
-  const products: Product[] = [
-    {
-      id: 1,
-      name: "The Complete Guide to Dementia Care",
-      description:
-        "Comprehensive handbook for families navigating dementia care journey.",
-      price: 24.99,
-      category: "books",
-      rating: 4.8,
-      reviews: 156,
-      inStock: true,
-    },
-    {
-      id: 2,
-      name: "Memory Activities Workbook",
-      description:
-        "Engaging activities and exercises designed to stimulate memory and cognition.",
-      price: 18.5,
-      category: "books",
-      rating: 4.6,
-      reviews: 89,
-      inStock: true,
-    },
-    {
-      id: 3,
-      name: "Wholeness Haven T-Shirt",
-      description: "Comfortable cotton t-shirt supporting dementia awareness.",
-      price: 19.99,
-      category: "apparel",
-      rating: 4.5,
-      reviews: 34,
-      inStock: true,
-    },
-    {
-      id: 4,
-      name: "Mindful Moments Mug",
-      description: "Inspirational ceramic mug with dementia awareness message.",
-      price: 12.99,
-      category: "accessories",
-      rating: 4.7,
-      reviews: 67,
-      inStock: true,
-    },
-    {
-      id: 5,
-      name: "Communication Cards Set",
-      description: "Visual communication aids for individuals with dementia.",
-      price: 29.99,
-      category: "resources",
-      rating: 4.9,
-      reviews: 123,
-      inStock: false,
-    },
-  ];
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case "books":
-        return <BookOpen className="h-4 w-4" />;
-      case "apparel":
-        return <Shirt className="h-4 w-4" />;
-      case "accessories":
-        return <Coffee className="h-4 w-4" />;
-      case "resources":
-        return <Star className="h-4 w-4" />;
-      default:
-        return <ShoppingBag className="h-4 w-4" />;
+  const getProduct = async () => {
+    const res = await GetProducts();
+    setProducts(res);
+  };
+
+  useEffect(() => {
+    getProduct();
+  }, []);
+
+  const deleteProduct = async (id: number) => {
+    setLoading(true);
+    try {
+      await DeleteProduct(id);
+      await getProduct();
+    } catch (error) {
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleEditClick = (product: Product) => {
+    setSelectedProduct(product);
+    setEditModalOpen(true);
   };
 
   const getStockStatus = (inStock: boolean) => {
@@ -102,19 +63,6 @@ const ProductsTable = () => {
         Out of Stock
       </span>
     );
-  };
-
-  const renderStars = (rating: number) => {
-    return [...Array(5)].map((_, i) => (
-      <Star
-        key={i}
-        className={`h-3 w-3 ${
-          i < Math.floor(rating)
-            ? "text-yellow-400 fill-current"
-            : "text-gray-300"
-        }`}
-      />
-    ));
   };
 
   return (
@@ -142,19 +90,13 @@ const ProductsTable = () => {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Category
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
                   Price
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Rating
+                  Quantity
                 </th>
                 <th
                   scope="col"
@@ -171,49 +113,37 @@ const ProductsTable = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {products.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
+              {products?.map((product) => (
+                <tr key={product?.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-900">
-                      {product.name}
+                      {product?.name}
                     </div>
                     <div className="text-sm text-gray-500 line-clamp-1">
-                      {product.description}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      {getCategoryIcon(product.category)}
-                      <span className="ml-2 capitalize">
-                        {product.category}
-                      </span>
+                      {product?.description}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    £{product.price.toFixed(2)}
+                    £{product?.price}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                    {product?.quantity}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex mr-2">
-                        {renderStars(product.rating)}
-                      </div>
-                      <span className="text-xs text-gray-500">
-                        ({product.reviews})
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStockStatus(product.inStock)}
+                    {getStockStatus(product?.inStock)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-3">
-                      <button className="text-gray-400 hover:text-primary cursor-pointer">
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button className="text-gray-400 hover:text-yellow-600 cursor-pointer">
+                      <button
+                        className="text-gray-400 hover:text-yellow-600 cursor-pointer"
+                        onClick={() => handleEditClick(product)}
+                      >
                         <Edit className="h-4 w-4" />
                       </button>
-                      <button className="text-gray-400 hover:text-red-600 cursor-pointer">
+                      <button
+                        className="text-gray-400 hover:text-red-600 cursor-pointer"
+                        onClick={() => deleteProduct(product?.id)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -223,6 +153,14 @@ const ProductsTable = () => {
             </tbody>
           </table>
         </div>
+        {selectedProduct && (
+          <EditProductModal
+            open={editModalOpen}
+            onOpenChange={setEditModalOpen}
+            product={selectedProduct}
+            refreshProducts={getProduct}
+          />
+        )}
       </div>
     </div>
   );

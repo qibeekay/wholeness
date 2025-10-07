@@ -1,94 +1,75 @@
-import React, { useState } from "react";
-import { Edit, Trash2, Eye } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Edit, Trash2 } from "lucide-react";
+import { DeleteBlog, GetBlogs } from "../../api/blog/Blog";
+import { formatDate } from "../../utils/formatDate";
 
 interface Blog {
   id: number;
   title: string;
   excerpt: string;
   content: string;
-  category: string;
-  status: "published" | "draft";
   author: string;
-  publishDate: string;
-  readTime: string;
+  created_at: string;
   image: string;
 }
 
-const BlogManager = () => {
-  const [existingBlogs] = useState<Blog[]>([
-    {
-      id: 1,
-      title: "Understanding Dementia: A Comprehensive Guide",
-      excerpt:
-        "Learn about the different types of dementia and how to provide better care.",
-      content: "Full blog content here...",
-      category: "education",
-      status: "published",
-      author: "Dr. Sarah Williams",
-      publishDate: "2024-01-15",
-      readTime: "5 min read",
-      image: "/placeholder.svg",
-    },
-    {
-      id: 2,
-      title: "Supporting Families Through Difficult Times",
-      excerpt: "Practical advice for families dealing with dementia diagnosis.",
-      content: "Full blog content here...",
-      category: "support",
-      status: "draft",
-      author: "Emma Thompson",
-      publishDate: "2024-01-20",
-      readTime: "7 min read",
-      image: "/placeholder.svg",
-    },
-  ]);
+interface BlogManagerProps {
+  refreshTrigger?: number;
+  onBlogCreated?: () => void;
+}
 
-  const getStatusColor = (status: string) => {
-    return status === "published"
-      ? "bg-green-100 text-green-800"
-      : "bg-yellow-100 text-yellow-800";
+const BlogManager = ({
+  refreshTrigger = 0,
+  onBlogCreated,
+}: BlogManagerProps) => {
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
+
+  const getBlog = async () => {
+    try {
+      setLoading(true);
+      const res = await GetBlogs();
+      setBlogs(res || []);
+    } catch (error) {
+      setBlogs([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+  useEffect(() => {
+    getBlog();
+  }, [refreshTrigger]); // This will re-run when refreshTrigger changes
+
+  const deleteBlog = async (id: number) => {
+    setLoading(true);
+    try {
+      await DeleteBlog(id);
+      await getBlog(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleEditClick = (blog: Blog) => {
+    setSelectedBlog(blog);
+    setEditModalOpen(true);
+  };
+
+  if (loading && blogs.length === 0) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-gray-500">Loading blogs...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
-      {/* Blog Stats */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Blog Statistics
-          </h2>
-          <p className="text-gray-500">Overview of your blog content</p>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <div className="text-2xl font-bold text-gray-800">12</div>
-            <div className="text-sm text-gray-500">Total Posts</div>
-          </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <div className="text-2xl font-bold text-green-600">8</div>
-            <div className="text-sm text-gray-500">Published</div>
-          </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <div className="text-2xl font-bold text-yellow-600">4</div>
-            <div className="text-sm text-gray-500">Drafts</div>
-          </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <div className="text-2xl font-bold text-primary">1.2k</div>
-            <div className="text-sm text-gray-500">Total Views</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Existing Blogs Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-6">
           <div className="mb-6">
@@ -118,25 +99,7 @@ const BlogManager = () => {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Category
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Status
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
                     Publish Date
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Read Time
                   </th>
                   <th
                     scope="col"
@@ -147,46 +110,32 @@ const BlogManager = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {existingBlogs.map((blog) => (
-                  <tr key={blog.id} className="hover:bg-gray-50">
+                {blogs?.map((blog) => (
+                  <tr key={blog?.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="font-medium text-gray-900">
-                        {blog.title}
-                      </div>
-                      <div className="text-sm text-gray-500 mt-1 line-clamp-1">
-                        {blog.excerpt}
+                        {blog?.title}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {blog.author}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
-                      {blog.category}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
-                          blog.status
-                        )}`}
-                      >
-                        {blog.status}
-                      </span>
+                      {blog?.author}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(blog.publishDate)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {blog.readTime}
+                      {formatDate(blog?.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-3">
-                        <button className="text-gray-400 hover:text-primary cursor-pointer">
-                          <Eye className="h-4 w-4" />
-                        </button>
-                        <button className="text-gray-400 hover:text-yellow-600 cursor-pointer">
+                        <button
+                          className="text-gray-400 hover:text-yellow-600 cursor-pointer"
+                          onClick={() => handleEditClick(blog)}
+                        >
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button className="text-gray-400 hover:text-red-600 cursor-pointer">
+                        <button
+                          className="text-gray-400 hover:text-red-600 cursor-pointer"
+                          onClick={() => deleteBlog(blog?.id)}
+                          disabled={loading}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
@@ -195,6 +144,12 @@ const BlogManager = () => {
                 ))}
               </tbody>
             </table>
+
+            {blogs.length === 0 && !loading && (
+              <div className="text-center py-8 text-gray-500">
+                No blog posts found. Create your first blog post!
+              </div>
+            )}
           </div>
         </div>
       </div>

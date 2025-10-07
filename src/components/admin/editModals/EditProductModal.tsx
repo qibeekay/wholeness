@@ -1,17 +1,28 @@
-import React, { useState } from "react";
-import { ShoppingBag, BookOpen, Shirt, Coffee, Star } from "lucide-react";
-import { CreateNewProduct } from "../../api/store/Product";
-import ImageUpload from "../shared/ImageUploadProps";
+import React, { useState, useEffect } from "react";
+import { ShoppingBag } from "lucide-react";
+import { EditProduct } from "../../../api/store/Product";
+import ImageUpload from "../../shared/ImageUploadProps";
 
-interface CreateProductModalProps {
+interface EditProductModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  product: {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    quantity: number;
+    inStock: number;
+  };
+  refreshProducts: () => void;
 }
 
-const CreateProductModal = ({
+const EditProductModal = ({
   open,
   onOpenChange,
-}: CreateProductModalProps) => {
+  product,
+  refreshProducts,
+}: EditProductModalProps) => {
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [productForm, setProductForm] = useState({
@@ -19,29 +30,39 @@ const CreateProductModal = ({
     description: "",
     price: 0,
     inStock: 1,
-    image: File,
     quantity: 0,
   });
+
+  useEffect(() => {
+    if (product) {
+      setProductForm({
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        inStock: product.inStock,
+        quantity: product.quantity,
+      });
+    }
+  }, [product]);
 
   const handleImageChange = (file: File | null) => {
     setProfileImageFile(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const payload = { ...productForm, image: profileImageFile };
     try {
-      const res = CreateNewProduct(payload);
-      console.log(res);
-    } catch {
+      await EditProduct(payload, product.id);
+      refreshProducts();
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error editing product:", error);
     } finally {
       setLoading(false);
-      onOpenChange(false);
     }
   };
-
-  // console.log(productForm);
 
   if (!open) return null;
 
@@ -54,11 +75,9 @@ const CreateProductModal = ({
             <div>
               <h2 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
                 <ShoppingBag className="h-6 w-6 text-primary" />
-                Add New Product
+                Edit Product
               </h2>
-              <p className="text-gray-500 mt-1">
-                Add a new product to your store
-              </p>
+              <p className="text-gray-500 mt-1">Update product details</p>
             </div>
             <button
               onClick={() => onOpenChange(false)}
@@ -80,8 +99,9 @@ const CreateProductModal = ({
             </button>
           </div>
 
-          {/* Modal Form */}
+          {/* Modal Form - Same as CreateProductModal but with existing values */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Name Field */}
             <div>
               <label
                 htmlFor="product-name"
@@ -101,6 +121,7 @@ const CreateProductModal = ({
               />
             </div>
 
+            {/* Description Field */}
             <div>
               <label
                 htmlFor="product-description"
@@ -124,6 +145,7 @@ const CreateProductModal = ({
               />
             </div>
 
+            {/* Price and Quantity Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -148,8 +170,6 @@ const CreateProductModal = ({
                       })
                     }
                     placeholder="0.00"
-                    // min="0"
-                    // step="0.01"
                     required
                   />
                 </div>
@@ -157,14 +177,14 @@ const CreateProductModal = ({
 
               <div>
                 <label
-                  htmlFor="product-price"
+                  htmlFor="product-quantity"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Total Stock Available
                 </label>
                 <div className="relative rounded-md shadow-sm">
                   <input
-                    id="product-price"
+                    id="product-quantity"
                     type="number"
                     className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-primary"
                     value={productForm.quantity}
@@ -183,6 +203,7 @@ const CreateProductModal = ({
               </div>
             </div>
 
+            {/* Stock Status and Image Upload */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -196,8 +217,8 @@ const CreateProductModal = ({
                       name="inStock"
                       value="true"
                       checked={productForm.inStock === 1}
-                      onChange={
-                        () => setProductForm({ ...productForm, inStock: 1 }) // <- boolean
+                      onChange={() =>
+                        setProductForm({ ...productForm, inStock: 1 })
                       }
                       className="h-4 w-4 text-primary focus:ring-primary"
                     />
@@ -215,8 +236,8 @@ const CreateProductModal = ({
                       name="inStock"
                       value="false"
                       checked={productForm.inStock === 0}
-                      onChange={
-                        () => setProductForm({ ...productForm, inStock: 0 }) // <- boolean
+                      onChange={() =>
+                        setProductForm({ ...productForm, inStock: 0 })
                       }
                       className="h-4 w-4 text-primary focus:ring-primary"
                     />
@@ -230,7 +251,6 @@ const CreateProductModal = ({
                 </div>
               </div>
 
-              {/* image */}
               <div className="">
                 <ImageUpload
                   onImageChange={handleImageChange}
@@ -252,7 +272,7 @@ const CreateProductModal = ({
                 type="submit"
                 className="cursor-pointer px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                {loading ? "Loading..." : "Add Product"}
+                {loading ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </form>
@@ -262,4 +282,4 @@ const CreateProductModal = ({
   );
 };
 
-export default CreateProductModal;
+export default EditProductModal;

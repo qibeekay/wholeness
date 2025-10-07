@@ -12,6 +12,9 @@ import Admin from "./pages/Admin/Admin";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { CartProvider } from "./components/context/CartContext";
+import { Toaster } from "sonner";
+import BlogPage from "./pages/Blog";
+import SingleBlog from "./components/home/SingleBlog";
 
 function App() {
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -28,11 +31,14 @@ function App() {
             <Route path="/events" element={<Events />} />
             <Route path="/store" element={<Shop />} />
             <Route path="/cart" element={<Carts />} />
+            <Route path="/blogs" element={<BlogPage />} />
+            <Route path="/blogs/:excerpts" element={<SingleBlog />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>
         </CartProvider>
       </Elements>
       <Footer />
+      <Toaster />
     </div>
   );
 }
