@@ -4,9 +4,15 @@ import EventsTable from "../EventsTable";
 
 interface Props {
   setCreateEventOpen: (open: boolean) => void;
+  refreshEvents?: number;
+  onEventCreated?: () => void;
 }
 
-const EventTab = ({ setCreateEventOpen }: Props) => {
+const EventTab = ({
+  setCreateEventOpen,
+  refreshEvents,
+  onEventCreated,
+}: Props) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -26,7 +32,10 @@ const EventTab = ({ setCreateEventOpen }: Props) => {
           Create Event
         </button>
       </div>
-      <EventsTable />
+      <EventsTable
+        refreshTrigger={refreshEvents}
+        onEventCreated={onEventCreated}
+      />
     </div>
   );
 };

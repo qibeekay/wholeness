@@ -109,19 +109,22 @@ const Footer = () => {
                 <h1 className="font-bold text-[24px]">Support</h1>
 
                 {/* appointment */}
-                <div>
+                {/* <div>
                   <Link
                     to={"/contact"}
                     className="underline text-[18px] font-medium"
                   >
                     Book an appointment
                   </Link>
-                </div>
+                </div> */}
 
                 {/* donate */}
                 <div>
                   <Link
-                    to={"/contact"}
+                    to={
+                      "https://www.easyfundraising.org.uk/support-a-good-cause/step-1/?char=384740&invite=ul051a&referral-campaign=c2s&utm_source=easyfundraising-app&utm_medium=referral&utm_content=share-tray"
+                    }
+                    target="blank_"
                     className="underline text-[18px] font-medium"
                   >
                     Donate now
@@ -131,7 +134,10 @@ const Footer = () => {
                 {/* partner */}
                 <div>
                   <Link
-                    to={"/contact"}
+                    to={
+                      "https://www.easyfundraising.org.uk/support-a-good-cause/step-1/?char=384740&invite=ul051a&referral-campaign=c2s&utm_source=easyfundraising-app&utm_medium=referral&utm_content=share-tray"
+                    }
+                    target="blank_"
                     className="underline text-[18px] font-medium"
                   >
                     Partner with us

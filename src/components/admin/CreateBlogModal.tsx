@@ -9,7 +9,7 @@ import { CreateNewBlog } from "../../api/blog/Blog";
 interface CreateBlogModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onBlogCreated: () => void; // Add this prop
+  onBlogCreated: () => void;
 }
 
 const CreateBlogModal = ({

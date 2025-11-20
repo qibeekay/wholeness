@@ -6,12 +6,12 @@ const OurServices = () => {
     <section className="max-w-[1600px] mx-auto px-4 py-20">
       <div>
         <h1 className="text-center font-bold xs:text-[24px] sm:text-[40px]">
-          Our Services
+          Club Sessions
         </h1>
-        <p className="text-center text-sm sm:text-base">
+        {/* <p className="text-center text-sm sm:text-base">
           We provide meaningful activities for individuals with dementia and
           ageing-related conditions — and essential support for their carers.
-        </p>
+        </p> */}
       </div>
 
       {/* club section */}
@@ -38,12 +38,12 @@ const OurServices = () => {
           </div>
 
           {/* session 1 */}
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <img src={getImageSrc("time.png")} alt="" />
             <p className="font-medium text-sm md:text-base">
               Session 1: 9:30 AM - 1: 30 PM
             </p>
-          </div>
+          </div> */}
 
           {/* session 2 */}
           <div className="flex gap-4">
@@ -53,8 +53,8 @@ const OurServices = () => {
               </div>
             </div>
             <div className="font-medium text-sm md:text-base">
-              <p>Session 2: 11:30 AM - 3: 30 PM</p>
-              <p className="text-sm font-light mt-5">
+              <p>Session 1: 11:00 AM - 2:00 PM</p>
+              <p className="text-sm font-bold mt-5">
                 More Thurrock locations coming soon!
               </p>
             </div>

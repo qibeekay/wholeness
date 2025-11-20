@@ -10,11 +10,16 @@ import MeetTheDirector from "../components/home/MeetTheDirector";
 import OurServices from "../components/home/OurServices";
 
 import Stories from "../components/home/Stories";
+import OtherHero from "../components/shared/OtherHero";
 
 export const Home = () => {
   return (
     <div className="text-lg">
-      <Hero />
+      <OtherHero
+        h1=" Welcome to Wholeness Haven CIC"
+        p="Where Ageing Well-Being And Dementia Care Meet Compassion"
+        img="hero1.jpg"
+      />
       <AboutSection />
       <Stories />
       <OurServices />

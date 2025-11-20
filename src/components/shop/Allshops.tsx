@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ShoppingBag, Star, BookOpen, Shirt, Coffee } from "lucide-react";
 import { Link } from "react-router-dom";
 import { GetProducts } from "../../api/store/Product";
@@ -14,7 +14,7 @@ interface Product {
 }
 
 const Allshops = () => {
-  const [products, setProducts] = React.useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const { items, addItem, totalItems } = useCart();
 
   const getProduct = async () => {
@@ -22,7 +22,7 @@ const Allshops = () => {
     setProducts(res);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getProduct();
   }, []);
 

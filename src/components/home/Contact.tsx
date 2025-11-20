@@ -5,12 +5,30 @@ import { getImageSrc } from "../../utils/imageUtils";
 const contactItems = [
   {
     icon: "location.png",
-    text: "Beaconsfield Palace, Tilbury Calcutta Road, Thurrock, East of England, RM18 7EN ",
+    link: "https://www.easyfundraising.org.uk/support-a-good-cause/step-1/?char=384740&invite=ul051a&referral-campaign=c2s&utm_source=easyfundraising-app&utm_medium=referral&utm_content=share-tray",
+    text: "Registered office address: 158 Dock Road, Tilbury, England, RM18 7BS",
   },
-  { icon: "phone.png", text: "+234810333333333" },
-  { icon: "gmail.png", text: "wholeness@gmail.com" },
-  { icon: "facebook.png", text: "@wholenesshaven" },
-  { icon: "instagram.png", text: "@wholenesshaven" },
+  { icon: "phone.png", link: "", text: "+44 7428 697038" },
+  {
+    icon: "gmail.png",
+    link: "mailto:wholenesshavencic@gmail.com",
+    text: "wholenesshavencic@gmail.com",
+  },
+  {
+    icon: "facebook.png",
+    link: "https://www.facebook.com/share/1BTzBNBfRQ/?mibextid=wwXIfr",
+    text: "@wholenesshaven",
+  },
+  {
+    icon: "instagram.png",
+    link: "https://youtube.com/@wholenesshaven-l1s?si=9SAYi0GUKAeVUlat",
+    text: "@wholenesshaven",
+  },
+  {
+    icon: "instagram.png",
+    link: "https://www.instagram.com/wholeness_havenclub?utm_source=qr&igsh=dHFibmQ1dnRva3dk",
+    text: "@wholeness_havenclub",
+  },
 ];
 const Contact = () => {
   return (
@@ -42,9 +60,13 @@ const Contact = () => {
                     <div>
                       <img src={getImageSrc(item.icon)} alt="" />
                     </div>
-                    <p className="font-light text-[#666666] text-base sm:text-[18px] ">
+                    <a
+                      href={`${item.link}`}
+                      target="_blank"
+                      className="font-light text-[#666666] hover:text-primary"
+                    >
                       {item.text}
-                    </p>
+                    </a>
                   </div>
                 ))}
               </div>

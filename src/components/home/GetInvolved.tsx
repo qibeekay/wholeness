@@ -14,14 +14,14 @@ const GetInvolved = () => {
       title: "Make a Donation",
       description: "Every gift  supports joy, dignity and care.",
       btn: "Donate Now",
-      link: "#",
+      link: "https://www.easyfundraising.org.uk/support-a-good-cause/step-1/?char=384740&invite=ul051a&referral-campaign=c2s&utm_source=easyfundraising-app&utm_medium=referral&utm_content=share-tray",
       image: "donate.png",
     },
     {
       title: "Information & Resource Hub",
       description: "Let’s build something beautiful together.",
       btn: "Partner With Us",
-      link: "/contact",
+      link: "https://www.easyfundraising.org.uk/support-a-good-cause/step-1/?char=384740&invite=ul051a&referral-campaign=c2s&utm_source=easyfundraising-app&utm_medium=referral&utm_content=share-tray",
       image: "partner.png",
     },
     {

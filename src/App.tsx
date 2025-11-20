@@ -15,6 +15,7 @@ import { CartProvider } from "./components/context/CartContext";
 import { Toaster } from "sonner";
 import BlogPage from "./pages/Blog";
 import SingleBlog from "./components/home/SingleBlog";
+import UserEvents from "./components/events/UserEvents";
 
 function App() {
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -34,6 +35,7 @@ function App() {
             <Route path="/blogs" element={<BlogPage />} />
             <Route path="/blogs/:excerpts" element={<SingleBlog />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/user" element={<UserEvents />} />
           </Routes>
         </CartProvider>
       </Elements>

@@ -1,57 +1,37 @@
 import { Edit, Trash2, Eye, Users, Calendar } from "lucide-react";
+import { useEffect, useState } from "react";
+import { DeleteEvent, GetEvents } from "../../api/events/Events";
+import EditEventModal from "./editModals/EditEventModal";
+import EventAttendeesModal from "./editModals/EventAttendeesModal";
 
 interface Event {
   id: number;
   title: string;
-  date: string;
-  time: string;
+  event_date: string;
+  event_time: string;
+  description: string;
   venue: string;
-  registered: number;
-  capacity: number;
+  booked: string;
+  capacity: string;
   category: string;
-  price: number;
+  price: string;
   status: "upcoming" | "ongoing" | "completed";
 }
 
-const EventsTable = () => {
-  const events: Event[] = [
-    {
-      id: 1,
-      title: "Understanding Dementia Workshop",
-      date: "2024-01-15",
-      time: "10:00 AM - 2:00 PM",
-      venue: "Community Center Hall A",
-      registered: 18,
-      capacity: 30,
-      category: "workshop",
-      price: 0,
-      status: "upcoming",
-    },
-    {
-      id: 2,
-      title: "Caregiver Support Group",
-      date: "2024-01-20",
-      time: "6:00 PM - 8:00 PM",
-      venue: "Online via Zoom",
-      registered: 12,
-      capacity: 20,
-      category: "support",
-      price: 0,
-      status: "upcoming",
-    },
-    {
-      id: 3,
-      title: "Professional Training Session",
-      date: "2024-01-10",
-      time: "9:00 AM - 5:00 PM",
-      venue: "Training Center",
-      registered: 25,
-      capacity: 25,
-      category: "training",
-      price: 299,
-      status: "completed",
-    },
-  ];
+interface EventManagerProps {
+  refreshTrigger?: number;
+  onEventCreated?: () => void;
+}
+
+const EventsTable = ({
+  refreshTrigger = 0,
+  onEventCreated,
+}: EventManagerProps) => {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [attendeesModalOpen, setAttendeesModalOpen] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -81,6 +61,11 @@ const EventsTable = () => {
     }
   };
 
+  const handleViewAttendees = (event: Event) => {
+    setSelectedEvent(event);
+    setAttendeesModalOpen(true);
+  };
+
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -89,6 +74,41 @@ const EventsTable = () => {
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  const getProduct = async () => {
+    const res = await GetEvents();
+    setEvents(res);
+  };
+
+  useEffect(() => {
+    getProduct();
+  }, [refreshTrigger]);
+
+  const deleteEvent = async (id: number) => {
+    setLoading(true);
+    try {
+      await DeleteEvent(id);
+      if (onEventCreated) {
+        onEventCreated();
+      }
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditClick = (event: Event) => {
+    setSelectedEvent(event);
+    setEditModalOpen(true);
+  };
+
+  if (loading && events.length === 0) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-gray-500">Loading lists...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -169,22 +189,24 @@ const EventsTable = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      {formatDate(event.date)}
+                      {formatDate(event.event_date)}
                     </div>
-                    <div className="text-sm text-gray-500">{event.time}</div>
+                    <div className="text-sm text-gray-500">
+                      {event.event_time}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {event.venue}
+                    {event?.venue}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <Users className="h-4 w-4 text-gray-400 mr-2" />
                       <div>
                         <span className="text-sm text-gray-900">
-                          {event.registered}
+                          {event?.booked}{" "}
                         </span>
                         <span className="text-sm text-gray-500">
-                          /{event.capacity}
+                          \ {event.capacity}
                         </span>
                       </div>
                     </div>
@@ -199,7 +221,7 @@ const EventsTable = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    {event.price === 0 ? (
+                    {event.price === "0" ? (
                       <span className="text-green-600">Free</span>
                     ) : (
                       <span>£{event.price}</span>
@@ -208,21 +230,32 @@ const EventsTable = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded-full capitalize ${getStatusColor(
-                        event.status
+                        event?.status
                       )}`}
                     >
-                      {event.status}
+                      {event?.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-3">
-                      <button className="text-gray-400 hover:text-primary cursor-pointer">
-                        <Eye className="h-4 w-4" />
+                      <button
+                        className="text-gray-400 hover:text-blue-600 cursor-pointer"
+                        onClick={() => handleViewAttendees(event)}
+                        title="View Attendees"
+                      >
+                        <Users className="h-4 w-4" />
                       </button>
-                      <button className="text-gray-400 hover:text-yellow-600 cursor-pointer">
+
+                      <button
+                        className="text-gray-400 hover:text-yellow-600 cursor-pointer"
+                        onClick={() => handleEditClick(event)}
+                      >
                         <Edit className="h-4 w-4" />
                       </button>
-                      <button className="text-gray-400 hover:text-red-600 cursor-pointer">
+                      <button
+                        className="text-gray-400 hover:text-red-600 cursor-pointer"
+                        onClick={() => deleteEvent(event?.id)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -231,7 +264,29 @@ const EventsTable = () => {
               ))}
             </tbody>
           </table>
+
+          {events.length === 0 && !loading && (
+            <div className="text-center py-8 text-gray-500">
+              No blog posts found. Create your first blog post!
+            </div>
+          )}
         </div>
+        {selectedEvent && (
+          <>
+            <EditEventModal
+              open={editModalOpen}
+              onOpenChange={setEditModalOpen}
+              event={selectedEvent}
+              refresh={onEventCreated}
+            />
+            <EventAttendeesModal
+              open={attendeesModalOpen}
+              onOpenChange={setAttendeesModalOpen}
+              eventId={selectedEvent.id}
+              eventTitle={selectedEvent.title}
+            />
+          </>
+        )}
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ const Career = () => {
     <section className="max-w-[1600px] mx-auto px-4 py-20">
       <div>
         <h1 className="text-left font-bold xs:text-[24px] sm:text-[40px]">
-          Career Support
+          Support
         </h1>
       </div>
 

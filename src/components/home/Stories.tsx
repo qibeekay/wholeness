@@ -23,11 +23,13 @@ const Stories = () => {
 
               {/* paragraph */}
               <p className="text-sm xs:text-base md:text-lg">
-                Wholeness Haven CIC was born from a passion to see individuals
-                with dementia and older adults experience life to the fullest.
-                Founded by experienced care professionals, we combine knowledge,
-                compassion, and innovation to provide a wide range of
-                activities, therapies, and support tailored to individual needs.
+                Wholeness Haven CIC was founded by experienced care
+                professionals with a deep passion for ensuring older adults,
+                including those living with dementia, can enjoy the fullness of
+                latter life. We combine expert knowledge, genuine compassion,
+                and innovative approaches to offer a wide range of activities,
+                therapies, and essential support tailored specifically to
+                individual needs.
               </p>
             </div>
 
@@ -49,10 +51,11 @@ const Stories = () => {
 
               {/* paragraph */}
               <p className="text-sm xs:text-base md:text-lg">
-                Wholeness Haven CIC is a community-based well-being club
-                supporting people living with dementia and those experiencing
-                the challenges of ageing. We offer inclusive, engaging
-                activities and essential support for carers.
+                We believe every older adult deserves to enjoy the fullness of
+                latter life. Wholeness Haven CIC is your community-based
+                well-being club, offering inclusive and engaging activities for
+                those experiencing the challenges of ageing, along with vital
+                support for the people who care for them.
               </p>
             </div>
           </div>

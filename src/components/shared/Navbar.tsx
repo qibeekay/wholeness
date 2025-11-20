@@ -1,5 +1,5 @@
 import { RiCloseFill, RiMenu3Line } from "@remixicon/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getImageSrc } from "../../utils/imageUtils";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
@@ -39,10 +39,26 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("user");
+    if (saved) {
+      try {
+        setUser(JSON.parse(saved));
+      } catch {
+        localStorage.removeItem("user"); // corrupt data → wipe it
+      }
+    }
+  }, []);
+
   const API_URL = import.meta.env.VITE_API_URL;
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  // Get user initial from name
+  const getUserInitial = (name: string) => {
+    return name.charAt(0).toUpperCase();
   };
 
   // Animation variants for mobile menu
@@ -121,7 +137,7 @@ const Navbar = () => {
           <img
             src={getImageSrc("Wlogo.png")}
             alt="Wholeness Haven Logo"
-            className="w-15 aspect-[2/1.5]"
+            className="w-[100px]"
           />
         </div>
 
@@ -144,17 +160,23 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-2">
-              <img
-                src={user.avatar || getImageSrc("default-avatar.png")}
-                alt="User profile"
-                className="w-8 h-8 rounded-full"
-              />
-              <button
+              {user.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt="User profile"
+                  className="w-8 h-8 rounded-full"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium">
+                  {getUserInitial(user.name)}
+                </div>
+              )}
+              {/* <button
                 onClick={logOut}
                 className="text-sm cursor-pointer text-gray-600 hover:text-gray-900"
               >
                 Logout
-              </button>
+              </button> */}
             </div>
           ) : (
             <button
@@ -225,11 +247,17 @@ const Navbar = () => {
                   custom={mobileLinks.length}
                   className="flex items-center justify-center gap-2"
                 >
-                  <img
-                    src={user.avatar || getImageSrc("default-avatar.png")}
-                    alt="User profile"
-                    className="w-8 h-8 rounded-full"
-                  />
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt="User profile"
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary text-sm font-medium">
+                      {getUserInitial(user.name)}
+                    </div>
+                  )}
                   <button onClick={logOut} className="text-white text-sm">
                     Logout
                   </button>

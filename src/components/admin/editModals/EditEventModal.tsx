@@ -1,19 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { EditEvent } from "../../../api/events/Events";
+import ImageUpload from "../../shared/ImageUploadProps";
 import { Calendar } from "lucide-react";
-import { CreateNewEvents } from "../../api/events/Events";
-import ImageUpload from "../shared/ImageUploadProps";
 
-interface CreateEventModalProps {
+interface EditProductModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onEventCreated: () => void;
+  event: {
+    id: number;
+    title: string;
+    description: string;
+    event_date: string;
+    event_time: string;
+    venue: string;
+    capacity: string;
+    category: string;
+    price: string;
+  };
+  refresh?: () => void;
 }
 
-const CreateEventModal = ({
+const EditEventModal = ({
   open,
   onOpenChange,
-  onEventCreated,
-}: CreateEventModalProps) => {
+  event,
+  refresh,
+}: EditProductModalProps) => {
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [eventForm, setEventForm] = useState({
@@ -25,29 +37,43 @@ const CreateEventModal = ({
     capacity: "",
     category: "",
     price: "",
-    image: "",
   });
+
+  useEffect(() => {
+    if (event) {
+      setEventForm({
+        title: event.title,
+        description: event.description,
+        event_date: event.event_date,
+        event_time: event.event_time,
+        venue: event.venue,
+        capacity: event.capacity,
+        category: event.category,
+        price: event.price,
+      });
+    }
+  }, [event]);
 
   const handleImageChange = (file: File | null) => {
     setProfileImageFile(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const payload = { ...eventForm, image: profileImageFile };
     try {
-      const res = CreateNewEvents(payload);
-      onEventCreated();
-      console.log(res);
-    } catch {
+      await EditEvent(payload, event.id);
+      if (refresh) {
+        refresh();
+      }
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error editing events:", error);
     } finally {
       setLoading(false);
-      onOpenChange(false);
     }
   };
-
-  console.log(eventForm);
 
   if (!open) return null;
 
@@ -60,11 +86,9 @@ const CreateEventModal = ({
             <div>
               <h2 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
                 <Calendar className="h-6 w-6 text-primary" />
-                Create New Event
+                Edit Event
               </h2>
-              <p className="text-gray-500 mt-1">
-                Add a new event to your calendar
-              </p>
+              <p className="text-gray-500 mt-1">Update an existing event</p>
             </div>
             <button
               onClick={() => onOpenChange(false)}
@@ -286,4 +310,4 @@ const CreateEventModal = ({
   );
 };
 
-export default CreateEventModal;
+export default EditEventModal;

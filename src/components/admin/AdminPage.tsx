@@ -27,10 +27,10 @@ const AdminPage = () => {
   const [createCourseOpen, setCreateCourseOpen] = useState(false);
   const [createBlogOpen, setCreateBlogOpen] = useState(false);
   const [createProductOpen, setCreateProductOpen] = useState(false);
-  const [refreshBlogs, setRefreshBlogs] = useState(0); // Add this state
+  const [refresh, setRefresh] = useState(0); // Add this state
 
-  const handleBlogCreated = () => {
-    setRefreshBlogs((prev) => prev + 1); // Increment to trigger refresh
+  const handleCreated = () => {
+    setRefresh((prev) => prev + 1); // Increment to trigger refresh
   };
 
   const renderTabContent = () => {
@@ -45,15 +45,21 @@ const AdminPage = () => {
           />
         );
       case "events":
-        return <EventTab setCreateEventOpen={setCreateEventOpen} />;
+        return (
+          <EventTab
+            setCreateEventOpen={setCreateEventOpen}
+            refreshEvents={refresh}
+            onEventCreated={handleCreated}
+          />
+        );
       case "courses":
         return <CourseTab setCreateCourseOpen={setCreateCourseOpen} />;
       case "blogs":
         return (
           <BlogsTab
             setCreateBlogOpen={setCreateBlogOpen}
-            refreshBlogs={refreshBlogs}
-            onBlogCreated={handleBlogCreated}
+            refreshBlogs={refresh}
+            onBlogCreated={handleCreated}
           />
         );
       case "store":
@@ -100,7 +106,7 @@ const AdminPage = () => {
             >
               Events
             </button>
-            <button
+            {/* <button
               className={`py-4 px-1 text-center border-b-2 font-medium text-sm cursor-pointer ${
                 activeTab === "courses"
                   ? "border-primary text-primary"
@@ -109,7 +115,7 @@ const AdminPage = () => {
               onClick={() => setActiveTab("courses")}
             >
               Courses
-            </button>
+            </button> */}
             <button
               className={`py-4 px-1 text-center border-b-2 font-medium text-sm cursor-pointer ${
                 activeTab === "blogs"
@@ -140,6 +146,7 @@ const AdminPage = () => {
         <CreateEventModal
           open={createEventOpen}
           onOpenChange={setCreateEventOpen}
+          onEventCreated={handleCreated}
         />
         <CreateCourseModal
           open={createCourseOpen}
@@ -148,7 +155,7 @@ const AdminPage = () => {
         <CreateBlogModal
           open={createBlogOpen}
           onOpenChange={setCreateBlogOpen}
-          onBlogCreated={handleBlogCreated} // Pass the callback here
+          onBlogCreated={handleCreated} // Pass the callback here
         />
         <CreateProductModal
           open={createProductOpen}

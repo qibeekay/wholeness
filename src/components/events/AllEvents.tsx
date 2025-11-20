@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Calendar,
   Clock,
@@ -9,104 +9,28 @@ import {
 } from "lucide-react";
 import SingleEvent from "./SingleEvent";
 import { getImageSrc } from "../../utils/imageUtils";
+import { GetEvents } from "../../api/events/Events";
 
 interface Event {
   id: number;
   title: string;
   description: string;
-  fullDescription: string;
-  date: string;
-  time: string;
-  location: string;
-  locationDetails: string;
+  event_date: string;
+  event_time: string;
+  venue: string;
   capacity: number;
-  registered: number;
+  booked: number;
   category: "workshop" | "support" | "social" | "training";
   price: number;
   image: string;
-  locationImages: string[];
   organizer: string;
   contactEmail: string;
 }
 
 const AllEvents = () => {
+  const [events, setEvents] = useState<Event[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-
-  const events: Event[] = [
-    {
-      id: 1,
-      title: "Understanding Dementia: A Family Workshop",
-      description:
-        "Learn about dementia stages, communication strategies, and available support resources.",
-      fullDescription:
-        "This comprehensive 2-hour workshop is designed specifically for family members who have been recently affected by a dementia diagnosis. Our expert facilitators will guide you through understanding the different types and stages of dementia, effective communication strategies that maintain dignity and connection, and comprehensive overview of support resources available in your community. You will learn practical tips for daily care, how to create a safe and supportive environment, and strategies for managing challenging behaviors with compassion. The workshop includes interactive discussions, real-life scenarios, and take-home resources. Light refreshments will be provided.",
-      date: "2024-01-15",
-      time: "10:00 AM - 12:00 PM",
-      location: "Wholeness Haven Community Center",
-      locationDetails:
-        "123 Wellness Street, Manchester, M1 2AB. The center is fully accessible with parking available on-site. Take bus routes 42, 43, or 86 to Wellness Street stop.",
-      capacity: 30,
-      registered: 18,
-      category: "workshop",
-      price: 0,
-      image:
-        "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=800&h=400&fit=crop",
-      locationImages: [
-        "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=600&h=400&fit=crop",
-        "https://images.unsplash.com/photo-1500673922987-e212871fec22?w=600&h=400&fit=crop",
-      ],
-      organizer: "Dr. Sarah Williams",
-      contactEmail: "events@wholenesshaven.org",
-    },
-    {
-      id: 2,
-      title: "Caregiver Support Group",
-      description:
-        "Monthly support group for family caregivers. Share experiences and find community.",
-      fullDescription:
-        "Join our monthly support group where family caregivers come together to share experiences, challenges, and victories in their caregiving journey. This safe and confidential space allows you to connect with others who understand your situation. Each session is facilitated by a licensed social worker and includes structured discussion time, peer support, and practical resource sharing. Topics vary each month but may include managing stress, finding respite care, navigating healthcare systems, and maintaining family relationships. No preparation required - just bring yourself and your experiences.",
-      date: "2024-01-20",
-      time: "2:00 PM - 4:00 PM",
-      location: "Online via Zoom",
-      locationDetails:
-        "This is a virtual event. Zoom link will be provided 24 hours before the event. Technical support available 30 minutes before start time.",
-      capacity: 20,
-      registered: 12,
-      category: "support",
-      price: 0,
-      image:
-        "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=400&fit=crop",
-      locationImages: [],
-      organizer: "Maria Rodriguez, LCSW",
-      contactEmail: "support@wholenesshaven.org",
-    },
-    {
-      id: 3,
-      title: "Memory Café Social Hour",
-      description:
-        "Relaxed social gathering for individuals with dementia and their families.",
-      fullDescription:
-        "Our Memory Café provides a welcoming, relaxed environment where individuals with dementia and their families can socialize, enjoy activities, and connect with others in similar situations. No structured agenda - just a comfortable space to chat, play games, listen to music, or simply enjoy each other's company. Our volunteers are trained to facilitate engaging conversations and activities that are appropriate for all abilities. Light refreshments and tea are provided. This is a judgment-free zone where everyone is welcome exactly as they are.",
-      date: "2024-01-25",
-      time: "3:00 PM - 5:00 PM",
-      location: "Riverside Community Hall",
-      locationDetails:
-        "Riverside Community Hall, 45 River Road, Manchester, M2 3CD. Ground floor venue with disabled access, free parking available. Near River Gardens park.",
-      capacity: 40,
-      registered: 22,
-      category: "social",
-      price: 5,
-      image:
-        "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&h=400&fit=crop",
-      locationImages: [
-        "https://images.unsplash.com/photo-1500673922987-e212871fec22?w=600&h=400&fit=crop",
-        "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=600&h=400&fit=crop",
-      ],
-      organizer: "Emma Clarke, OT",
-      contactEmail: "social@wholenesshaven.org",
-    },
-  ];
 
   const categories = [
     { value: "all", label: "All Events" },
@@ -125,6 +49,15 @@ const AllEvents = () => {
     };
     return colors[category as keyof typeof colors] || "bg-gray-500";
   };
+
+  const getEvents = async () => {
+    const res = await GetEvents();
+    setEvents(res);
+  };
+
+  useEffect(() => {
+    getEvents();
+  }, []);
 
   const filteredEvents =
     selectedCategory === "all"
@@ -226,20 +159,20 @@ const AllEvents = () => {
                       alt="Date icon"
                       className="w-4 sm:w-5 h-4 sm:h-5"
                     />
-                    <span>{event.date}</span>
+                    <span>{event.event_date}</span>
                   </div>
                   <div className="flex items-center space-x-2 py-2">
                     <Clock className="h-5 w-5 text-[#673F9A]" />
-                    <span>{event.time}</span>
+                    <span>{event.event_time}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <MapPin className="h-5 w-5 text-[#673F9A]" />
-                    <span>{event.location}</span>
+                    <span>{event.venue}</span>
                   </div>
                   <div className="flex items-center space-x-2 py-2">
                     <Users className="h-5 w-5 text-[#673F9A]" />
                     <span>
-                      {event.registered}/{event.capacity} registered
+                      {event.booked}/{event.capacity} registered
                     </span>
                   </div>
                 </div>
@@ -248,7 +181,7 @@ const AllEvents = () => {
                   <div
                     className="bg-primary h-2 rounded-full transition-all duration-300"
                     style={{
-                      width: `${(event.registered / event.capacity) * 100}%`,
+                      width: `${(event.booked / event.capacity) * 100}%`,
                     }}
                   ></div>
                 </div>
