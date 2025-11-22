@@ -1,6 +1,13 @@
 import React from "react";
 import { getImageSrc } from "../../utils/imageUtils";
 
+// YouTube Icon Component
+const YouTubeIcon = ({ className = "w-6 h-6" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
+  </svg>
+);
+
 // Contact information array
 const contactItems = [
   {
@@ -11,8 +18,8 @@ const contactItems = [
   { icon: "phone.png", link: "", text: "+44 7428 697038" },
   {
     icon: "gmail.png",
-    link: "mailto:wholenesshavencic@gmail.com",
-    text: "wholenesshavencic@gmail.com",
+    link: "mailto:info@wholenesshaven.co.uk",
+    text: "info@wholenesshaven.co.uk",
   },
   {
     icon: "facebook.png",
@@ -21,15 +28,16 @@ const contactItems = [
   },
   {
     icon: "instagram.png",
-    link: "https://youtube.com/@wholenesshaven-l1s?si=9SAYi0GUKAeVUlat",
-    text: "@wholenesshaven",
-  },
-  {
-    icon: "instagram.png",
     link: "https://www.instagram.com/wholeness_havenclub?utm_source=qr&igsh=dHFibmQ1dnRva3dk",
     text: "@wholeness_havenclub",
   },
+  {
+    icon: "youtube",
+    link: "https://youtube.com/@wholenesshaven-l1s?si=9SAYi0GUKAeVUlat",
+    text: "@wholenesshaven",
+  },
 ];
+
 const Contact = () => {
   return (
     <section className="w-full bg-[#F9F5FF]">
@@ -48,7 +56,7 @@ const Contact = () => {
                 Get in Touch With Us!
               </h1>
               <p className=" sm:text-[24px] max-w-[500px] mt-5">
-                We’d love to hear from you! Reach out for inquiries,
+                We'd love to hear from you! Reach out for inquiries,
                 partnerships, or support.
               </p>
             </div>
@@ -57,12 +65,17 @@ const Contact = () => {
               <div className="flex flex-col gap-6">
                 {contactItems.map((item, index) => (
                   <div key={index} className="flex items-center gap-4">
-                    <div>
-                      <img src={getImageSrc(item.icon)} alt="" />
+                    <div className="flex items-center justify-center w-6 h-6">
+                      {item.icon === "youtube" ? (
+                        <YouTubeIcon className="w-6 h-6 text-purple-800" />
+                      ) : (
+                        <img src={getImageSrc(item.icon)} alt="" />
+                      )}
                     </div>
                     <a
-                      href={`${item.link}`}
+                      href={item.link}
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="font-light text-[#666666] hover:text-primary"
                     >
                       {item.text}

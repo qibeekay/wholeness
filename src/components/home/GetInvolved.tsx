@@ -9,29 +9,44 @@ const GetInvolved = () => {
       btn: "Become a Volunteer",
       link: "/contact",
       image: "volunteer.png",
+      isExternal: false, // Internal route
     },
     {
       title: "Make a Donation",
-      description: "Every gift  supports joy, dignity and care.",
+      description: "Every gift supports joy, dignity and care.",
       btn: "Donate Now",
       link: "https://www.easyfundraising.org.uk/support-a-good-cause/step-1/?char=384740&invite=ul051a&referral-campaign=c2s&utm_source=easyfundraising-app&utm_medium=referral&utm_content=share-tray",
       image: "donate.png",
+      isExternal: true, // External URL
     },
     {
-      title: "Information & Resource Hub",
-      description: "Let’s build something beautiful together.",
-      btn: "Partner With Us",
-      link: "https://www.easyfundraising.org.uk/support-a-good-cause/step-1/?char=384740&invite=ul051a&referral-campaign=c2s&utm_source=easyfundraising-app&utm_medium=referral&utm_content=share-tray",
+      title: "Wholeness Haven-Survey Form",
+      description: "Let's build something beautiful together.",
+      btn: "Take a Survey",
+      link: "https://docs.google.com/forms/d/1bj-HYqlqfOrq3i0Fqohof5xCZ2-NJeNyPrybrj80JVo/viewform?edit_requested=true",
       image: "partner.png",
+      isExternal: true, // External URL
     },
     {
-      title: "Join Our Mailing list",
-      description: "Be the first to hear about our sessions and stories.",
-      btn: "Suscribe",
-      link: "",
+      title: "Give us your Feedbacks",
+      description: "We appreciate your honest feedbacks.",
+      btn: "Subscribe",
+      link: "https://docs.google.com/forms/d/1f5CAe4CNyPj-iU9FykGDKfS8rlxZEYEEPb6OMj2ELiY/viewform?edit_requested=true",
       image: "mailing.png",
+      isExternal: true, // External URL
     },
   ];
+
+  const handleButtonClick = (link: string, isExternal: boolean) => {
+    if (isExternal) {
+      // Open external links in new tab
+      window.open(link, "_blank", "noopener,noreferrer");
+    } else {
+      // Navigate internally
+      window.location.href = link;
+    }
+  };
+
   return (
     <section className="w-full">
       <div className="max-w-[1600px] mx-auto px-4 py-20">
@@ -68,9 +83,14 @@ const GetInvolved = () => {
                 </p>
               </div>
 
-              <div className=" w-full">
+              <div className="w-full">
                 {/* button */}
-                <button className="w-full md:w-[300px] h-[60px] p-[10px] bg-primary text-white rounded-[8px] cursor-pointer font-bold hover:bg-primary/90 transition-colors ease-in-out duration-300 text-sm sm:text-base">
+                <button
+                  onClick={() =>
+                    handleButtonClick(support.link, support.isExternal)
+                  }
+                  className="w-full md:w-[300px] h-[60px] p-[10px] bg-primary text-white rounded-[8px] cursor-pointer font-bold hover:bg-primary/90 transition-colors ease-in-out duration-300 text-sm sm:text-base"
+                >
                   {support.btn}
                 </button>
               </div>

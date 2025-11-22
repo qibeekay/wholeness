@@ -3,7 +3,6 @@ import { getImageSrc } from "../../utils/imageUtils";
 import { motion, animate } from "framer-motion";
 import { decode } from "html-entities";
 import DOMPurify from "dompurify";
-import { useNavigate } from "react-router-dom";
 import { GetBlogs } from "../../api/blog/Blog";
 import { formatDate } from "../../utils/formatDate";
 
@@ -98,9 +97,6 @@ const BlogItem: React.FC<BlogItemProps> = ({ blog, onBlogClick }) => {
 
       {/* Text */}
       <div className="p-4 sm:p-5 sm:pt-8">
-        {/* <p className="text-[#7B4BB7] font-semibold text-sm sm:text-base mb-1">
-          {blog.title}
-        </p> */}
         <div className="flex items-center gap-2 mb-2">
           <p className="text-[#344054] text-xs sm:text-sm flex items-center gap-1">
             <img
@@ -132,8 +128,6 @@ const Blog = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const navigate = useNavigate();
-
   const getBlog = async () => {
     try {
       setLoading(true);
@@ -151,7 +145,13 @@ const Blog = () => {
   }, []);
 
   const singleBlog = (excerpts: string) => {
-    navigate(`/blogs/${encodeURIComponent(excerpts)}`);
+    // Default redirection using window.location
+    window.location.href = `/blogs/${encodeURIComponent(excerpts)}`;
+  };
+
+  const seeAllBlogs = () => {
+    // Default redirection for "See All" button
+    window.location.href = "/blogs";
   };
 
   return (
@@ -164,7 +164,7 @@ const Blog = () => {
           </h1>
           <div>
             <button
-              onClick={() => navigate("/blogs")}
+              onClick={seeAllBlogs}
               className="cursor-pointer bg-primary text-white py-2 sm:py-[10px] w-[180px] sm:w-[224px] h-[48px] sm:h-[60px] px-4 text-sm sm:text-[16px] font-bold rounded-full hover:bg-primary/90 transition-colors ease-in-out duration-300"
             >
               See All

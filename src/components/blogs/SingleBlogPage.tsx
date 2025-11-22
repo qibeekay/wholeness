@@ -46,7 +46,7 @@ const SingleBlogPage = () => {
     <div>
       <div className="font-poppins">
         <div className="relative ">
-          <header className="w-full bg-[#c46b12] text-white">
+          <header className="w-full bg-primary text-white">
             <div>
               <div className=" max-w-6xl mx-auto px-4 pt-[5rem] ms:pt-[7rem] pb-[17rem] min-h-screen flex flex-col items-center justify-center">
                 {/* header */}
