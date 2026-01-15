@@ -3,6 +3,7 @@ import Activities from "../components/home/Activities";
 import Blog from "../components/home/Blog";
 import Career from "../components/home/Career";
 import Contact from "../components/home/Contact";
+import Credential from "../components/home/Credentials";
 import GetInvolved from "../components/home/GetInvolved";
 
 import Hero from "../components/home/Hero";
@@ -27,6 +28,7 @@ export const Home = () => {
       <Career />
       <Activities />
       <Blog />
+      <Credential />
       <Contact />
       <GetInvolved />
     </div>
