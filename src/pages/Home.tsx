@@ -28,8 +28,8 @@ export const Home = () => {
       <Career />
       <Activities />
       <Blog />
-      <Credential />
       <Contact />
+      <Credential />
       <GetInvolved />
     </div>
   );
