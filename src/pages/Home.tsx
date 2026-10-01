@@ -24,7 +24,7 @@ export const Home = () => {
       <AboutSection />
       <Stories />
       <OurServices />
-      <MeetTheDirector />
+      {/* <MeetTheDirector /> */}
       <Career />
       <Activities />
       <Blog />
